@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chess app</title>
+</head>
+<body>
+
+<h1>This is a Heading</h1>
+<p>This is a paragraph.</p>
+
+<script src="http://www.java.com/js/deployJava.js"></script>
+<script>
+    var attributes = {
+        code:'Main.class',
+    width:700, height:500} ;
+    var parameters = {};
+    var version = '1.6' ;
+    deployJava.runApplet(attributes, parameters, version);
+</script>
+
+
+<canvas id = "board"></canvas>
+
+<script>
+    const square = document.createElement("button");
+    square.textContent = "atest";
+    document.body.appendChild(square);
+</script>
+
+</body>
+</html>
