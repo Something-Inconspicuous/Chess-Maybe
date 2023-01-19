@@ -5,11 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "java",
+            "name": "Launch Current File",
             "request": "launch",
-            "name": "Open test.html",
-            "webRoot": "${workspaceFolder}",    // "${workspaceFolder}/src"
-            "file": "${relativeFile}"
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "Chess-Maybe_15aba574"
         }
     ]
 }
