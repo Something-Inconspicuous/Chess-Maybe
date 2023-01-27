@@ -1,36 +1,49 @@
-#include "Piece.h"
+#include "Piece.hpp"
+#include "string"
+#include <map>
+
 //#include "exception"
 
 using namespace std;
 //using std::exception;
 
 Piece::Piece(){
-    mPieceValue = 0;
+    mType = NONE;
+    mColor = NONE;
 }
 
 Piece::Piece(int type, int color){
-    mPieceValue = type + color;
+    mType = type;
+    mColor = color;
 }
 
+std::map<char, int> Piece::pieceRep = {
+            {'p', PAWN},
+            {'n', KNIGHT},
+            {'b', BISHOP},
+            {'r', ROOK},
+            {'q', QUEEN},
+            {'k', KING}
+        };
 bool Piece::isColor(int color){
     if(color != WHITE && color != BLACK && color != NONE){
         throw ("recieved color value that does not exist");
     }
-    return false;
+    return mColor == color;
 }
 
 int Piece::type(){
-    return mPieceValue < WHITE ? mPieceValue : (mPieceValue < BLACK ? mPieceValue - WHITE : mPieceValue - BLACK);
+    return mType;
 }
 
 int Piece::color(){
-    return mPieceValue - type();
+    return mColor;
 }
 
-/*string Piece::toString(){
+string Piece::toString(){
     string output = "";
 
-    switch(color()){
+    switch(mColor){
         case NONE:
             output += "Non-colored ";
             break;
@@ -47,7 +60,7 @@ int Piece::color(){
             throw ("Invalid Piece");
     }
 
-    switch(type()){
+    switch(mType){
         case NONE:
             output += "untyped piece";
             break;
@@ -82,4 +95,7 @@ int Piece::color(){
 
     return output;
 }
-*/
+
+char Piece::toChar(){
+    
+}

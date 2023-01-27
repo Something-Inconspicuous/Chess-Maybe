@@ -1,4 +1,5 @@
 #include "string"
+#include <map>
 
 using namespace std;
 
@@ -15,18 +16,23 @@ class Piece{
         static const int ROOK = 4;
         static const int QUEEN = 5;
         static const int KING = 6;
-        static const int WHITE = 8;
-        static const int BLACK = 16;
+        static const int WHITE = 1;
+        static const int BLACK = 2;
+
+        static const std::map<char, int> pieceRep;
         
-        bool isColor(int color);
+        bool isColor(int);
 
         int type();
 
         int color();
 
 
-        //string toString();
+        string toString();
+
+        char toChar();
 
     private:
-        int mPieceValue;
+        int mType;
+        int mColor;
 };
