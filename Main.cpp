@@ -1,13 +1,15 @@
+//g++ Piece.cpp Main.cpp -o Main
+
 #include <iostream>
 #include "Piece.h"
 
 using namespace std;
 
 int main(){
-    cout << "Hello, World!" << endl;
+    cout << "testity test" << endl;
 
-    Piece p;
-    //cout << p.type() << endl;
+    Piece p; //this is the line that breaks everything
+    //cout << p->type() << endl;
 
     return 0;
-}
+} 
