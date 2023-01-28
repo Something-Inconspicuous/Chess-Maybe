@@ -8,35 +8,20 @@ using namespace std;
 //using std::exception;
 
 Piece::Piece(){
-    mType = NONE;
-    mColor = NONE;
+    mType = notype;
+    mColor = nocolor;
 }
 
-Piece::Piece(int type, int color){
-    mType = type;
-    mColor = color;
+Piece::Piece(type nType, color nColor){
+    mType = nType;
+    mColor = nColor;
 }
 
-std::map<char, int> Piece::pieceRep = {
-            {'p', PAWN},
-            {'n', KNIGHT},
-            {'b', BISHOP},
-            {'r', ROOK},
-            {'q', QUEEN},
-            {'k', KING}
-        };
-bool Piece::isColor(int color){
-    if(color != WHITE && color != BLACK && color != NONE){
-        throw ("recieved color value that does not exist");
-    }
-    return mColor == color;
-}
-
-int Piece::type(){
+int Piece::getType(){
     return mType;
 }
 
-int Piece::color(){
+int Piece::getColor(){
     return mColor;
 }
 
@@ -44,15 +29,15 @@ string Piece::toString(){
     string output = "";
 
     switch(mColor){
-        case NONE:
+        case nocolor:
             output += "Non-colored ";
             break;
 
-        case WHITE:
+        case white:
             output += "White ";
             break;
 
-        case BLACK:
+        case black:
             output += "Black ";
             break;
 
@@ -61,31 +46,31 @@ string Piece::toString(){
     }
 
     switch(mType){
-        case NONE:
+        case notype:
             output += "untyped piece";
             break;
 
-        case PAWN:
+        case pawn:
             output += "pawn";
             break;
         
-        case KNIGHT:
+        case knight:
             output += "knight";
             break;
 
-        case BISHOP:
+        case bishop:
             output += "bishop";
             break;
         
-        case ROOK:
+        case rook:
             output += "rook";
             break;
         
-        case QUEEN:
+        case queen:
             output += "queen";
             break;
 
-        case KING:
+        case king:
             output += "king";
             break;
         
@@ -94,8 +79,4 @@ string Piece::toString(){
     }
 
     return output;
-}
-
-char Piece::toChar(){
-    
 }
