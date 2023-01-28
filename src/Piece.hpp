@@ -10,7 +10,7 @@
 
 using namespace std;
 
-struct Piece{
+class Piece{
     public:
         enum type{
             notype, pawn, knight, bishop, rook, queen, king
@@ -18,6 +18,16 @@ struct Piece{
 
         enum color{
             nocolor, white, black
+        };
+
+        const std::map<type, char> pieceToChar = {
+            {notype, '0'},
+            {pawn, 'p'},
+            {knight, 'n'},
+            {bishop, 'b'},
+            {rook, 'r'},
+            {queen, 'q'},
+            {king, 'k'}
         };
         
         Piece(type, color);
@@ -29,7 +39,11 @@ struct Piece{
 
         string toString();
 
+        char toChar();
+
     private:
         type mType;
         color mColor;
+
+        char uppercase(char);
 };

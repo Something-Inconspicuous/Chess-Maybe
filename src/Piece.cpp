@@ -80,3 +80,21 @@ string Piece::toString(){
 
     return output;
 }
+
+char Piece::toChar(){
+    char chr = pieceToChar.at(mType);
+
+    if(mColor == white){
+        chr = uppercase(chr);
+    } else if(mColor == black){
+        //cool, is already lowercase
+    } else{
+        chr = '0';
+    }
+
+    return chr;
+}
+
+char Piece::uppercase(char c){
+    return c -('a'-'A');
+}
