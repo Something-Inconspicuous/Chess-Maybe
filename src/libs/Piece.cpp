@@ -1,10 +1,12 @@
 #include "Piece.hpp"
+#include "LettersManip.hpp"
 #include "string"
 #include <map>
 
 //#include "exception"
 
 using namespace std;
+using namespace LettersManip;
 //using std::exception;
 
 Piece::Piece(){
@@ -41,8 +43,8 @@ string Piece::toString(){
             output += "Black ";
             break;
 
-        default:
-            throw ("Invalid Piece");
+        //default:
+        //    throw ("Invalid Piece");
     }
 
     switch(mType){
@@ -74,8 +76,8 @@ string Piece::toString(){
             output += "king";
             break;
         
-        default:
-            throw ("Invalid Piece");
+        //default:
+        //    throw ("Invalid Piece");
     }
 
     return output;
@@ -85,16 +87,8 @@ char Piece::toChar(){
     char chr = pieceToChar.at(mType);
 
     if(mColor == white){
-        chr = uppercase(chr);
-    } else if(mColor == black){
-        //cool, is already lowercase
-    } else{
-        chr = '0';
+        chr = toUpperCase(chr);
     }
 
     return chr;
-}
-
-char Piece::uppercase(char c){
-    return c -('a'-'A');
 }

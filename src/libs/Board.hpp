@@ -14,8 +14,6 @@ class Board{
         Piece getPiece(int);
 
         const int directionAddValues[8] = {};
-
-        string toString();
     private:
         Piece* mPieces[64] = {};
 };

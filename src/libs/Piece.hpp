@@ -44,6 +44,4 @@ class Piece{
     private:
         type mType;
         color mColor;
-
-        char uppercase(char);
 };
