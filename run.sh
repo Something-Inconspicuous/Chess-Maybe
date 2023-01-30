@@ -1,2 +1,2 @@
-g++ *.cpp
+g++ src/**/*.cpp
 ./a.out

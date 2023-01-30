@@ -6,13 +6,13 @@ using namespace std;
 using namespace LettersManip;
 
 Board::Board(){
-    for(int i = 0; i < size(mPieces); i++){
+    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         mPieces[i] = NULL;
     }
 }
 
 Board::Board(string fen){
-    for(int i = 0; i < size(mPieces); i++){
+    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         mPieces[i] = NULL;
     }
 
@@ -47,7 +47,7 @@ Board::Board(string fen){
 }
 
 Board::~Board(){
-    for(int i = 0; i < size(mPieces); i++){
+    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         delete mPieces[i];
     }
 }

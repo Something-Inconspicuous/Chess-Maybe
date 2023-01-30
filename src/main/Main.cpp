@@ -1,5 +1,5 @@
 #include <iostream>
-#include "..\..\src\libs\Board.hpp"
+#include "../../src/libs/Board.hpp"
 
 using namespace std;
 
