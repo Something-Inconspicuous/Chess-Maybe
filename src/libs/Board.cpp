@@ -78,3 +78,7 @@ string Board::toString(){
     
     return brd;
 }
+
+Piece* Board::getPiece(int index){
+    return mPieces[index];
+}
