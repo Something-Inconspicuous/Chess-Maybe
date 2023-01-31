@@ -12,6 +12,11 @@ Board::Board(){
     }
 }
 
+Board* Board::startingBoard(){
+    // Create a board in the standard starting position
+    return new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+}
+
 Board::Board(string fen){
     // Create Board from a FEN
     // See https://ia802908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt

@@ -7,6 +7,7 @@ class Board{
         Board();
         ~Board();
 
+        static Board* startingBoard();
         Board(string);
 
         string toString();
