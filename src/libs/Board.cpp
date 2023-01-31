@@ -6,12 +6,21 @@ using namespace std;
 using namespace LettersManip;
 
 Board::Board(){
+    // Create an empty board
     for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         mPieces[i] = NULL;
     }
 }
 
+Board* Board::startingBoard(){
+    // Create a board in the standard starting position
+    return new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+}
+
 Board::Board(string fen){
+    // Create Board from a FEN
+    // See https://ia802908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt
+    // for more information on FEN and a formal specification
     for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         mPieces[i] = NULL;
     }
@@ -47,12 +56,14 @@ Board::Board(string fen){
 }
 
 Board::~Board(){
+    // Not(~) Board function clears the board
     for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         delete mPieces[i];
     }
 }
 
 string Board::toString(){
+    // renders the Board for printing
     string brd = "";
     brd = "";
     for(int i = 7; i >= 0; i--){

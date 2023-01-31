@@ -6,7 +6,7 @@ using namespace std;
 int main(){
     cout << "testity test" << endl;
 
-    Board* board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    Board* board = Board::startingBoard();
 
     cout << (*board).toString() + "" << endl;
 
