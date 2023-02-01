@@ -13,17 +13,13 @@
 
 - Something Inconspicuous\*
     - ***[github](https://github.com/Something-Inconspicuous)***
-- Muhammad
+- Muhammad Monib
     - ***[github](https://github.com/imacrazyguy412)***
+    - Discord: imacrazyguy412\#2186
 - Matthew
     - ***[github](https://github.com/mteam88)***
+- Alex Lorei
+    - ***[github](https://github.com/x86Cow)***
+    - ***[github](https://blog.hackingalpha.tech)***
 
 \*contributer does not want to use real name
-
----
-## To Use:
-
-For Windows, run the `run.bat` file in the `run` folder.
-
-For Linux, run the `run.sh` file in the `run` folder.
-
