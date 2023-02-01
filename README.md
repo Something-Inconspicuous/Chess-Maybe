@@ -13,13 +13,13 @@
 
 - Something Inconspicuous\*
     - ***[github](https://github.com/Something-Inconspicuous)***
-- Muhammad Monib
+- Muhammad
     - ***[github](https://github.com/imacrazyguy412)***
     - Discord: imacrazyguy412\#2186
 - Matthew
     - ***[github](https://github.com/mteam88)***
 - Alex Lorei
     - ***[github](https://github.com/x86Cow)***
-    - ***[github](https://blog.hackingalpha.tech)***
+    - ***[hackingAlpha.tech](https://blog.hackingalpha.tech)***
 
 \*contributer does not want to use real name
