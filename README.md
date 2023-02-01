@@ -13,9 +13,8 @@
 
 - Something Inconspicuous\*
     - ***[github](https://github.com/Something-Inconspicuous)***
-- Muhammad Monib
+- Muhammad
     - ***[github](https://github.com/imacrazyguy412)***
-    - Discord: imacrazyguy412\#2186
 - Matthew
     - ***[github](https://github.com/mteam88)***
 
