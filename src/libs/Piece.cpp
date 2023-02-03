@@ -3,11 +3,8 @@
 #include "string"
 #include <map>
 
-//#include "exception"
-
 using namespace std;
 using namespace LettersManip;
-//using std::exception;
 
 Piece::Piece(){
     mType = notype;
@@ -84,7 +81,14 @@ string Piece::toString(){
 }
 
 char Piece::toChar(){
-    char chr = pieceToChar.at(mType);
+    char chr;
+
+    try{
+        chr = pieceToChar.at(mType);
+    } catch(std::exception e){
+        chr = ' ';
+    }
+    
 
     if(mColor == white){
         chr = toUpperCase(chr);
@@ -92,3 +96,7 @@ char Piece::toChar(){
 
     return chr;
 }
+
+//Piece& Piece::operator=(const Piece &){
+    
+//}

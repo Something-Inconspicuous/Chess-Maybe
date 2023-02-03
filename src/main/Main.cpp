@@ -1,15 +1,35 @@
 #include <iostream>
-#include "../../src/libs/Board.hpp"
+#include "Game.hpp"
 
 using namespace std;
 
 int main(){
-    cout << "testity test" << endl;
+    //all of this is testing right now
+    
+    Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    cout << game.boardAsString() << endl;
 
-    Board* board = Board::startingBoard();
+    string inp;
+    Move move;
 
-    cout << (*board).toString() + "" << endl;
+    cout << "start square: ";
+    cin >> inp;
 
-    delete board;
+    move.squareFrom = std::stoi(inp);
+
+    cout << "end square: ";
+    cin >> inp;
+
+    move.squareTo = std::stoi(inp);
+
+    
+    game.makeMove(move);
+
+    cout << "after move" << endl << game.boardAsString() << endl;
+
+
+
+    game.~Game();
+    
     return 0;
 } 

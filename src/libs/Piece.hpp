@@ -1,14 +1,6 @@
-/**
- * @file Piece.hpp
- * @author Something Inconspicuous <webhead220@gmail.com>
- * 
- * @brief Holds a representation of a chess piece
-*/
-
 #include "string"
 #include <map>
 
-using namespace std;
 
 class Piece{
     public:
@@ -20,15 +12,7 @@ class Piece{
             nocolor, white, black
         };
 
-        const std::map<type, char> pieceToChar = {
-            {notype, '0'},
-            {pawn, 'p'},
-            {knight, 'n'},
-            {bishop, 'b'},
-            {rook, 'r'},
-            {queen, 'q'},
-            {king, 'k'}
-        };
+       
         
         Piece(type, color);
         Piece();
@@ -37,11 +21,22 @@ class Piece{
 
         int getColor();
 
-        string toString();
+        std::string toString();
 
         char toChar();
+
 
     private:
         type mType;
         color mColor;
+
+        const std::map<Piece::type, char> pieceToChar = {
+            {Piece::notype, '0'},
+            {Piece::pawn, 'p'},
+            {Piece::knight, 'n'},
+            {Piece::bishop, 'b'},
+            {Piece::rook, 'r'},
+            {Piece::queen, 'q'},
+            {Piece::king, 'k'}
+        };
 };

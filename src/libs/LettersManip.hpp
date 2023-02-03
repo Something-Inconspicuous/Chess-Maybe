@@ -1,8 +1,5 @@
 #include "string"
 
-
-using namespace std;
-
 /// @brief a bunch of methods for manipulating characters
 namespace LettersManip{
     /// @brief Converts the case of the charater to the oppsite. 

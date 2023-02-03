@@ -1,9 +1,10 @@
 #include "Board.hpp"
 #include "LettersManip.hpp"
-#include <iostream>
 
 using namespace std;
 using namespace LettersManip;
+
+const int directionAddValues[8] = {};
 
 Board::Board(){
     // Create an empty board
@@ -18,9 +19,6 @@ Board* Board::startingBoard(){
 }
 
 Board::Board(string fen){
-    // Create Board from a FEN
-    // See https://ia802908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt
-    // for more information on FEN and a formal specification
     for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
         mPieces[i] = NULL;
     }
@@ -74,6 +72,7 @@ string Board::toString(){
 
             if(pTemp != NULL){
                 brd += (*pTemp).toChar();
+                //brd += std::to_string(i*8 + j);
                 brd += "|";
             } else{
                 brd += " |";
@@ -90,6 +89,22 @@ string Board::toString(){
     return brd;
 }
 
-Piece* Board::getPiece(int index){
-    return mPieces[index];
+Piece Board::getPiece(int index){
+    return *mPieces[index];
 }
+
+void Board::setPiece(int index, Piece piece){
+    delete mPieces[index];
+
+    mPieces[index] = &piece;
+}
+
+void Board::makeMove(Move move){
+    delete mPieces[move.squareTo];
+    
+    mPieces[move.squareTo] = mPieces[move.squareFrom];
+
+    delete mPieces[move.squareFrom];
+    mPieces[move.squareFrom] = NULL;
+}
+

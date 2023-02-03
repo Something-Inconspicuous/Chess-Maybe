@@ -1,2 +1,2 @@
-g++ src/**/*.cpp -o Main
+g++ src/main/*.cpp src/libs/*.cpp -o Main
 Main.exe
