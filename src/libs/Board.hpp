@@ -15,6 +15,11 @@ class Board{
         /// for more information on FEN and a formal specification
         /// @param fen the FEN string to create the board from 
         Board(std::string);
+        
+        /// @brief the rank and file offsets to move a direction
+        /// @param direction which direction to get the offset of
+        /// @param isRank whether or not the offset is for the file or rank (0 for file, 1 for rank)
+        static const int offsets[8][2];
 
         std::string toString();
 
@@ -37,17 +42,5 @@ class Board{
         //};
         
 
-        /// @brief the rank and file offsets to move a direction
-        /// @param direction which direction to get the offset of
-        /// @param isRank whether or not the offset is for the file or rank (0 for file, 1 for rank)
-        const int offsets[8][2] = {
-            {1, 0}, //right
-            {-1, 0}, //left
-            {0, 1}, //up
-            {0, -1}, //down
-            {1, 1}, //up-right
-            {-1, 1}, //up-left
-            {1, -1}, //down-right
-            {-1, -1}, //down-left
-        };
+        
 };

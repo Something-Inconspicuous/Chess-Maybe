@@ -16,11 +16,11 @@ Piece::Piece(type nType, color nColor){
     mColor = nColor;
 }
 
-int Piece::getType(){
+Piece::type Piece::getType(){
     return mType;
 }
 
-int Piece::getColor(){
+Piece::color Piece::getColor(){
     return mColor;
 }
 

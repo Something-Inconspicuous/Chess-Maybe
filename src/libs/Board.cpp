@@ -4,6 +4,17 @@
 using namespace std;
 using namespace LettersManip;
 
+const int Board::offsets[8][2] = {
+            {1, 0}, //right
+            {-1, 0}, //left
+            {0, 1}, //up
+            {0, -1}, //down
+            {1, 1}, //up-right
+            {-1, 1}, //up-left
+            {1, -1}, //down-right
+            {-1, -1}, //down-left
+        };
+
 Board::Board(){
     // Create an empty board
     for(int rank = 0; rank < 8; rank++){
@@ -98,7 +109,10 @@ string Board::toString(){
 }
 
 Piece Board::getPiece(int file, int rank){
-    return *mPieces[file][rank];
+    if(mPieces[file][rank]){
+        return *mPieces[file][rank];
+    }
+    return Piece();
 }
 
 void Board::makeMove(Move move){

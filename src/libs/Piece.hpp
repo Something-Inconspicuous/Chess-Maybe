@@ -17,9 +17,9 @@ class Piece{
         Piece(type, color);
         Piece();
 
-        int getType();
+        type getType();
 
-        int getColor();
+        color getColor();
 
         std::string toString();
 

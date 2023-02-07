@@ -1,5 +1,4 @@
 #include "../../src/libs/Board.hpp"
-#include <iostream>
 
 class Game{
 private:
@@ -17,5 +16,5 @@ public:
 
     std::string boardAsString();
 
-
+    std::vector<Move> getMovesFor(int fileFrom, int rankFrom);
 };

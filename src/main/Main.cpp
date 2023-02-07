@@ -3,12 +3,7 @@
 
 using namespace std;
 
-int main(){
-    //all of this is testing right now
-    
-    Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-    cout << game.boardAsString() << endl;
-
+Move getMove(){
     string inp;
     Move move;
 
@@ -29,13 +24,36 @@ int main(){
 
     cout << "end rank: ";
     cin >> inp;
-
+    
     move.rankTo = std::stoi(inp);
 
-    
-    game.makeMove(move);
+    return move;
+}
 
-    cout << "after move" << endl << game.boardAsString() << endl;
+int main(){
+    //all of this is testing right now
+    
+    Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    //cout << game.boardAsString() << endl;
+
+    
+
+    
+    //Move move = getMove();
+    
+    //game.makeMove(move);
+
+
+
+    //testing stuff
+    vector<Move> moves = game.getMovesFor(3, 0);
+
+    for (Move m : moves){
+        cout<<m.fileFrom<<":"<<m.rankFrom<<"->"<<m.fileTo<<":"<<m.rankTo<<endl;
+    }
+    
+
+    //cout << "after move" << endl << game.boardAsString() << endl;
 
 
 
