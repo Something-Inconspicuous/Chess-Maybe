@@ -4,12 +4,13 @@
 using namespace std;
 using namespace LettersManip;
 
-const int directionAddValues[8] = {};
-
 Board::Board(){
     // Create an empty board
-    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
-        mPieces[i] = NULL;
+    for(int rank = 0; rank < 8; rank++){
+        for(int file = 0; file < 8; file++){
+            delete mPieces[file][rank];
+            mPieces[file][rank] = NULL;
+        }
     }
 }
 
@@ -19,8 +20,11 @@ Board* Board::startingBoard(){
 }
 
 Board::Board(string fen){
-    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
-        mPieces[i] = NULL;
+    for(int rank = 0; rank < 8; rank++){
+        for(int file = 0; file < 8; file++){
+            delete mPieces[file][rank];
+            mPieces[file][rank] = NULL;
+        }
     }
 
     map<char, Piece::type> dict = {
@@ -46,7 +50,8 @@ Board::Board(string fen){
             } else{
                 Piece::color col = c >= 'A' && c <= 'Z' ? Piece::white : Piece::black;
 
-                mPieces[rank*8 + file] = new Piece(dict[toLowerCase(c)], col);
+
+                mPieces[file][rank] = new Piece(dict[toLowerCase(c)], col);
                 file++;
             }
         }
@@ -55,8 +60,11 @@ Board::Board(string fen){
 
 Board::~Board(){
     // Not(~) Board function clears the board
-    for(int i = 0; i < (sizeof(mPieces)/sizeof(Piece)); i++){
-        delete mPieces[i];
+    for(int rank = 0; rank < 8; rank++){
+        for(int file = 0; file < 8; file++){
+            delete mPieces[file][rank];
+            mPieces[file][rank] = NULL;
+        }
     }
 }
 
@@ -64,18 +72,18 @@ string Board::toString(){
     // renders the Board for printing
     string brd = "";
     brd = "";
-    for(int i = 7; i >= 0; i--){
-        brd += "-----------------\n";
-        brd += "|";
-        for (int j = 0; j < 8; j++){
-            Piece* pTemp = mPieces[i*8 + j];
+    for(int rank = 7; rank >= 0; rank--){
+        brd += "+ - + - + - + - + - + - + - + - +\n";
+        brd += "| ";
+        for (int file = 0; file < 8; file++){
+            Piece* pTemp = mPieces[file][rank];
 
             if(pTemp != NULL){
                 brd += (*pTemp).toChar();
                 //brd += std::to_string(i*8 + j);
-                brd += "|";
+                brd += " | ";
             } else{
-                brd += " |";
+                brd += "  | ";
             }
 
             //destroy pointer, just to be safe
@@ -84,27 +92,21 @@ string Board::toString(){
         }
         brd += "\n";
     }
-    brd += "-----------------\n";
+    brd += "+ - + - + - + - + - + - + - + - +\n";
     
     return brd;
 }
 
-Piece Board::getPiece(int index){
-    return *mPieces[index];
-}
-
-void Board::setPiece(int index, Piece piece){
-    delete mPieces[index];
-
-    mPieces[index] = &piece;
+Piece Board::getPiece(int file, int rank){
+    return *mPieces[file][rank];
 }
 
 void Board::makeMove(Move move){
-    delete mPieces[move.squareTo];
+    delete mPieces[move.fileTo][move.rankTo];
     
-    mPieces[move.squareTo] = mPieces[move.squareFrom];
+    mPieces[move.fileTo][move.rankTo] = mPieces[move.fileFrom][move.rankFrom];
 
-    delete mPieces[move.squareFrom];
-    mPieces[move.squareFrom] = NULL;
+    delete mPieces[move.fileFrom][move.rankFrom];
+    mPieces[move.fileFrom][move.rankFrom] = NULL;
 }
 

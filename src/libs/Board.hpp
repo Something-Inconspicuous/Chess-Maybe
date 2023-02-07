@@ -1,5 +1,6 @@
 #include "Piece.hpp"
 #include "Move.hpp"
+#include "vector"
 
 class Board{
     public:
@@ -18,18 +19,35 @@ class Board{
         std::string toString();
 
         /// @brief returns the piece stored at specified index
-        /// @param index {int} the index of the desired piece
+        /// @param file {int} the file of the desired piece
+        /// @param rank {int} the rank of the desired piece
         /// @return a piece object
         /// @throws {IndexOutOfBoundError} if the given index is negative or above the size of mPieces
-        Piece getPiece(int);
-
-        /// @brief sets the stored piece at a specified index to a specified piece
-        /// @param index {int} the index of the desired square
-        /// @param piece {Piece} the piece to place at the desired square
-        void setPiece(int, Piece);
+        Piece getPiece(int file, int rank);
 
         void makeMove(Move move);
 
+        std::vector<Move> getMovesFor(int file, int rank);
+
     private:
-        Piece* mPieces[64] = {};
+        Piece* mPieces[8][8] = {};
+
+        //enum direction{
+        //    right, left, up, down, up_right, up_left, down_right, down_left 
+        //};
+        
+
+        /// @brief the rank and file offsets to move a direction
+        /// @param direction which direction to get the offset of
+        /// @param isRank whether or not the offset is for the file or rank (0 for file, 1 for rank)
+        const int offsets[8][2] = {
+            {1, 0}, //right
+            {-1, 0}, //left
+            {0, 1}, //up
+            {0, -1}, //down
+            {1, 1}, //up-right
+            {-1, 1}, //up-left
+            {1, -1}, //down-right
+            {-1, -1}, //down-left
+        };
 };

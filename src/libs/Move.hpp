@@ -1,4 +1,6 @@
 struct Move{
-    int squareFrom;
-    int squareTo;
+    int fileFrom;
+    int rankFrom;
+    int fileTo;
+    int rankTo;
 };

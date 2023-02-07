@@ -12,15 +12,25 @@ int main(){
     string inp;
     Move move;
 
-    cout << "start square: ";
+    cout << "start file: ";
     cin >> inp;
 
-    move.squareFrom = std::stoi(inp);
+    move.fileFrom = std::stoi(inp);
 
-    cout << "end square: ";
+    cout << "start rank: ";
     cin >> inp;
 
-    move.squareTo = std::stoi(inp);
+    move.rankFrom = std::stoi(inp);
+
+    cout << "end file: ";
+    cin >> inp;
+
+    move.fileTo = std::stoi(inp);
+
+    cout << "end rank: ";
+    cin >> inp;
+
+    move.rankTo = std::stoi(inp);
 
     
     game.makeMove(move);
