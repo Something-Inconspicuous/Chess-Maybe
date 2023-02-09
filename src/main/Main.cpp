@@ -3,6 +3,8 @@
 
 using namespace std;
 
+
+
 Move getMove(){
     string inp;
     Move move;
@@ -34,30 +36,31 @@ int main(){
     //all of this is testing right now
     
     Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-    //cout << game.boardAsString() << endl;
+    cout << game.boardAsString() << endl;
 
     
 
     
-    //Move move = getMove();
+    Move move = getMove();
     
-    //game.makeMove(move);
+    game.makeMove(move);
 
 
 
     //testing stuff
-    vector<Move> moves = game.getMovesFor(3, 0);
+    //vector<Move> moves = game.getMovesFor(3, 0);
 
-    for (Move m : moves){
-        cout<<m.fileFrom<<":"<<m.rankFrom<<"->"<<m.fileTo<<":"<<m.rankTo<<endl;
-    }
-    
+    //for (Move m : moves){
+        //cout<<m.fileFrom<<":"<<m.rankFrom<<"->"<<m.fileTo<<":"<<m.rankTo<<endl;
+    //}
 
-    //cout << "after move" << endl << game.boardAsString() << endl;
+    cout << "after move" << endl << game.boardAsString() << endl;
+
+    //cout<<"test"<<endl;
 
 
 
-    game.~Game();
+    //game.~Game();
     
     return 0;
 } 

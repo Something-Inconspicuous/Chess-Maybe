@@ -87,19 +87,13 @@ string Board::toString(){
         brd += "+ - + - + - + - + - + - + - + - +\n";
         brd += "| ";
         for (int file = 0; file < 8; file++){
-            Piece* pTemp = mPieces[file][rank];
-
-            if(pTemp != NULL){
-                brd += (*pTemp).toChar();
+            if(mPieces[file][rank] != NULL){
+                brd += mPieces[file][rank]->toChar();
                 //brd += std::to_string(i*8 + j);
                 brd += " | ";
             } else{
                 brd += "  | ";
             }
-
-            //destroy pointer, just to be safe
-            pTemp = NULL;
-            delete pTemp;
         }
         brd += "\n";
     }
@@ -116,9 +110,14 @@ Piece Board::getPiece(int file, int rank){
 }
 
 void Board::makeMove(Move move){
-    delete mPieces[move.fileTo][move.rankTo];
+    //delete mPieces[move.fileTo][move.rankTo];
     
-    mPieces[move.fileTo][move.rankTo] = mPieces[move.fileFrom][move.rankFrom];
+    //mPieces[move.fileTo][move.rankTo] = mPieces[move.fileFrom][move.rankFrom];
+
+    //delete mPieces[move.fileFrom][move.rankFrom];
+    //mPieces[move.fileFrom][move.rankFrom] = NULL;
+
+    std::swap(mPieces[move.fileTo][move.rankTo], mPieces[move.fileFrom][move.rankFrom]);
 
     delete mPieces[move.fileFrom][move.rankFrom];
     mPieces[move.fileFrom][move.rankFrom] = NULL;
