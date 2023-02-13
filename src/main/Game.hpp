@@ -16,5 +16,7 @@ public:
 
     std::string boardAsString();
 
+    std::string boardAsString(std::vector<Move> moves);
+
     std::vector<Move> getMovesFor(int fileFrom, int rankFrom);
 };

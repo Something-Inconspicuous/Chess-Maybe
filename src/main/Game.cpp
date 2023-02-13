@@ -23,6 +23,10 @@ string Game::boardAsString(){
     return mBoard->toString();
 }
 
+string Game::boardAsString(std::vector<Move> moves){
+    return mBoard->toString(moves);
+}
+
 std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
     std::vector<Move> moves;
     Piece::type pieceType = (mBoard->getPiece(fileFrom, rankFrom).getType());
