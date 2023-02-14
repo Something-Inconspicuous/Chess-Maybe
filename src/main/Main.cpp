@@ -3,14 +3,12 @@
 
 using namespace std;
 
-void printMoves(vector<Move> moves){
+void printMoves(vector<Move> moves, Game game){
     if(moves.size() == 0){
         cout << "no moves found" << endl;
     } else{
         for (Move m : moves){
-            cout << m.fileFrom << ":" << m.rankFrom
-            << "->"
-            << m.fileTo << ":" << m.rankTo << endl;
+            cout << game.moveToString(m) << endl;
         }
         
     }
@@ -56,7 +54,7 @@ int main(){
     
     //game.makeMove(move);
 
-    printMoves(game.getMovesFor(1, 0));
+    printMoves(game.getMovesFor(1, 0), game);
 
 
     //cout << "after move" << endl << game.boardAsString() << endl;

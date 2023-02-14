@@ -84,7 +84,7 @@ string Board::toString(){
     string brd = "";
     brd = "";
     for(int rank = 7; rank >= 0; rank--){
-        brd += "+ - + - + - + - + - + - + - + - +\n";
+        brd += std::to_string(rank + 1) + " - + - + - + - + - + - + - + - +\n";
         brd += "| ";
         for (int file = 0; file < 8; file++){
             if(mPieces[file][rank] != NULL){
@@ -97,7 +97,7 @@ string Board::toString(){
         }
         brd += "\n";
     }
-    brd += "+ - + - + - + - + - + - + - + - +\n";
+    brd += "a - b - c - d - e - f - g - h - +\n";
     
     return brd;
 }
@@ -122,7 +122,7 @@ string Board::toString(vector<Move> moves){
     string brd = "";
     brd = "";
     for(int rank = 7; rank >= 0; rank--){
-        brd += "+ - + - + - + - + - + - + - + - +\n";
+        brd += std::to_string(rank + 1) + " - + - + - + - + - + - + - + - +\n";
         brd += "| ";
         for (int file = 0; file < 8; file++){
             if(mPieces[file][rank] != NULL){
@@ -148,7 +148,7 @@ string Board::toString(vector<Move> moves){
         }
         brd += "\n";
     }
-    brd += "+ - + - + - + - + - + - + - + - +\n";
+    brd += "a - b - c - d - e - f - g - h - +\n";
     
     return brd;
 }
