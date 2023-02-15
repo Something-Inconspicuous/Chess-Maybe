@@ -84,26 +84,71 @@ string Board::toString(){
     string brd = "";
     brd = "";
     for(int rank = 7; rank >= 0; rank--){
-        brd += "+ - + - + - + - + - + - + - + - +\n";
+        brd += std::to_string(rank + 1) + " - + - + - + - + - + - + - + - +\n";
         brd += "| ";
         for (int file = 0; file < 8; file++){
-            Piece* pTemp = mPieces[file][rank];
-
-            if(pTemp != NULL){
-                brd += (*pTemp).toChar();
+            if(mPieces[file][rank] != NULL){
+                brd += mPieces[file][rank]->toChar();
                 //brd += std::to_string(i*8 + j);
                 brd += " | ";
             } else{
                 brd += "  | ";
             }
-
-            //destroy pointer, just to be safe
-            pTemp = NULL;
-            delete pTemp;
         }
         brd += "\n";
     }
-    brd += "+ - + - + - + - + - + - + - + - +\n";
+    brd += "a - b - c - d - e - f - g - h - +\n";
+    
+    return brd;
+}
+
+string Board::toString(vector<Move> moves){
+    auto indexOf = [moves](int f, int r){
+        for(int i = 0; i < moves.size(); i++){
+            Move m = moves.at(i);
+
+            if(m.rankTo == r && m.fileTo == f){
+                return i;
+            }    
+        }
+        return -1;
+    };
+
+    if(moves.size() == 0){
+        return this->toString();
+    }
+
+    // renders the Board for printing
+    string brd = "";
+    brd = "";
+    for(int rank = 7; rank >= 0; rank--){
+        brd += std::to_string(rank + 1) + " - + - + - + - + - + - + - + - +\n";
+        brd += "| ";
+        for (int file = 0; file < 8; file++){
+            if(mPieces[file][rank] != NULL){
+                brd += mPieces[file][rank]->toChar();
+                
+                if(file == moves.at(0).fileFrom && rank == moves.at(0).rankFrom){
+                    brd += "@| ";
+                } else{
+                    if(indexOf(file, rank) != -1){
+                        brd += "*| ";
+                    } else{
+                        brd += " | "; 
+                    }
+                }           
+            } else{
+
+                if(indexOf(file, rank) != -1){
+                    brd += "* | ";
+                } else{
+                    brd += "  | ";
+                }
+            }
+        }
+        brd += "\n";
+    }
+    brd += "a - b - c - d - e - f - g - h - +\n";
     
     return brd;
 }
@@ -116,9 +161,14 @@ Piece Board::getPiece(int file, int rank){
 }
 
 void Board::makeMove(Move move){
-    delete mPieces[move.fileTo][move.rankTo];
+    //delete mPieces[move.fileTo][move.rankTo];
     
-    mPieces[move.fileTo][move.rankTo] = mPieces[move.fileFrom][move.rankFrom];
+    //mPieces[move.fileTo][move.rankTo] = mPieces[move.fileFrom][move.rankFrom];
+
+    //delete mPieces[move.fileFrom][move.rankFrom];
+    //mPieces[move.fileFrom][move.rankFrom] = NULL;
+
+    std::swap(mPieces[move.fileTo][move.rankTo], mPieces[move.fileFrom][move.rankFrom]);
 
     delete mPieces[move.fileFrom][move.rankFrom];
     mPieces[move.fileFrom][move.rankFrom] = NULL;

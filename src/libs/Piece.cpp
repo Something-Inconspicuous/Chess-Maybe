@@ -1,7 +1,6 @@
 #include "Piece.hpp"
 #include "LettersManip.hpp"
 #include "string"
-#include <map>
 
 using namespace std;
 using namespace LettersManip;
@@ -15,6 +14,16 @@ Piece::Piece(type nType, color nColor){
     mType = nType;
     mColor = nColor;
 }
+
+const map<Piece::type, char> Piece::pieceToChar = {
+            {Piece::notype, '0'},
+            {Piece::pawn, 'p'},
+            {Piece::knight, 'n'},
+            {Piece::bishop, 'b'},
+            {Piece::rook, 'r'},
+            {Piece::queen, 'q'},
+            {Piece::king, 'k'}
+        };
 
 Piece::type Piece::getType(){
     return mType;

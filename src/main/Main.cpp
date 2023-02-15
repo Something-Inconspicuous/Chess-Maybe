@@ -3,6 +3,17 @@
 
 using namespace std;
 
+void printMoves(vector<Move> moves, Game game){
+    if(moves.size() == 0){
+        cout << "no moves found" << endl;
+    } else{
+        for (Move m : moves){
+            cout << game.moveToString(m) << endl;
+        }
+        
+    }
+}
+
 Move getMove(){
     string inp;
     Move move;
@@ -34,7 +45,7 @@ int main(){
     //all of this is testing right now
     
     Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-    //cout << game.boardAsString() << endl;
+    cout << game.boardAsString() << endl;
 
     
 
@@ -43,21 +54,16 @@ int main(){
     
     //game.makeMove(move);
 
+    printMoves(game.getMovesFor(1, 0), game);
 
-
-    //testing stuff
-    vector<Move> moves = game.getMovesFor(3, 0);
-
-    for (Move m : moves){
-        cout<<m.fileFrom<<":"<<m.rankFrom<<"->"<<m.fileTo<<":"<<m.rankTo<<endl;
-    }
-    
 
     //cout << "after move" << endl << game.boardAsString() << endl;
 
+    //cout<<"test"<<endl;
 
 
-    game.~Game();
+
+    //game.~Game();
     
     return 0;
 } 

@@ -21,7 +21,14 @@ class Board{
         /// @param isRank whether or not the offset is for the file or rank (0 for file, 1 for rank)
         static const int offsets[8][2];
 
+        /// @brief returns the board in text form
+        /// @return the board in string form
         std::string toString();
+
+        /// @brief returns the board in string form, showing all of the given moves
+        /// @param moves {vector<Move>} the moves to display
+        /// @return the board in string form
+        std::string toString(std::vector<Move> moves);
 
         /// @brief returns the piece stored at specified index
         /// @param file {int} the file of the desired piece

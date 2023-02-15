@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "../libs/LettersManip.hpp"
 
 using namespace std;
 
@@ -11,6 +12,7 @@ Game::~Game(){
     delete mBoard;
 }
 
+
 void Game::changeTurn(){
     mTurnToMove = mTurnToMove == Piece::white ? Piece::black : Piece::white;
 }
@@ -21,6 +23,10 @@ void Game::makeMove(Move move){
 
 string Game::boardAsString(){
     return mBoard->toString();
+}
+
+string Game::boardAsString(std::vector<Move> moves){
+    return mBoard->toString(moves);
 }
 
 std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
@@ -94,4 +100,42 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
     }
 
     return moves;
+}
+
+
+//representation methods
+
+char Game::fileToChar(int file){
+    if(file < 0 || file > 7){
+        return '0';
+    }
+
+    return 'a' + file;
+}
+
+char Game::rankToInt(int rank){
+    return '0' + rank + 1;
+}
+
+std::string Game::moveToString(Move move){
+    std::string str = "";
+    
+    Piece pPieceMoving = mBoard->getPiece(move.fileFrom, move.rankFrom);
+
+    if(pPieceMoving.getType() != Piece::pawn){
+        str += LettersManip::toUpperCase((Piece::pieceToChar.at(pPieceMoving.getType())));
+    }
+
+    //if the move is a capture, mark it as such
+    if(mBoard->getPiece(move.fileTo, move.rankTo).getType() != Piece::notype){
+        if(pPieceMoving.getType() == Piece::pawn){
+            str += fileToChar(move.fileFrom);
+        }
+        str += "x";
+    }
+
+    str += fileToChar(move.fileTo);
+    str += rankToInt(move.rankTo);
+    
+    return str;
 }

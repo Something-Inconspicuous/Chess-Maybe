@@ -1,3 +1,5 @@
+#ifndef LETTERSMANIP_HPP
+#define LETTERSMANIP_HPP
 #include "string"
 
 /// @brief a bunch of methods for manipulating characters
@@ -18,3 +20,4 @@ namespace LettersManip{
     /// @return the uppercase letter
     char toUpperCase(char);
 };
+#endif
