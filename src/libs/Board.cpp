@@ -10,6 +10,7 @@ const int Board::offsets[8][2] = {
             {0, 1}, //up
             {0, -1}, //down
             {1, 1}, //up-right
+            // Hi, It's me again, I love you devs
             {-1, 1}, //up-left
             {1, -1}, //down-right
             {-1, -1}, //down-left
