@@ -34,6 +34,10 @@ Piece::color Piece::getColor(){
 }
 
 string Piece::toString(){
+    if(this == NULL){
+        return "no piece";
+    }
+
     string output = "";
 
     switch(mColor){

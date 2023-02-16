@@ -54,6 +54,20 @@ public:
     /// @brief gives the string representation of a move
     /// @param move the move to give the string representation of
     /// @return the human name of the move (Nf3, Qb3\# h4+, O-O, etc.)
-    /// @note checks, checkmates, and castles have not been added
+    /// @note checks, checkmates, and castles have not been added yet
     std::string moveToString(Move move);
+
+    /// @brief converts a character to the corrosponding file int
+    /// @param file the char to convert 
+    /// @return the int that corrosponds to the move
+    static int charToFile(char file);
+
+    /// @brief converts a character to the corrosponding rank int
+    /// @param rank the char to convert
+    /// @return the int the corrosponds to the move
+    static int charToRank(char rank);
+
+    /// @brief returns a reference to the board
+    /// @return the board
+    Board& getBoard();
 };

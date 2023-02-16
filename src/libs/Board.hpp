@@ -34,12 +34,13 @@ class Board{
         /// @param file {int} the file of the desired piece
         /// @param rank {int} the rank of the desired piece
         /// @return a piece object
-        /// @throws {IndexOutOfBoundError} if the given index is negative or above the size of mPieces
+        /// @throws @ref invalid_argument if the given index is negative or above the size of mPieces
         Piece getPiece(int file, int rank);
 
+        /// @brief moves a piece on the board
+        /// @param move Move the move to play
+        /// @throws @ref invalid argument if the given move has invalid starting or ending squares
         void makeMove(Move move);
-
-        std::vector<Move> getMovesFor(int file, int rank);
 
     private:
         Piece* mPieces[8][8] = {};
@@ -47,7 +48,4 @@ class Board{
         //enum direction{
         //    right, left, up, down, up_right, up_left, down_right, down_left 
         //};
-        
-
-        
 };

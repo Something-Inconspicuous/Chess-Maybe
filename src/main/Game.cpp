@@ -30,7 +30,9 @@ string Game::boardAsString(std::vector<Move> moves){
 }
 
 std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
+    
     std::vector<Move> moves;
+    
     Piece::type pieceType = (mBoard->getPiece(fileFrom, rankFrom).getType());
     //cout<<mBoard->getPiece(fileFrom, rankFrom).toString()<<endl;
 
@@ -54,7 +56,7 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                         }
 
                         if(mBoard->getPiece(file, rank).getColor() == mTurnToMove){
-                            //there is one of our pieces blocking us, so move too the nexxt direction
+                            //there is one of our pieces blocking us, so move too the next direction
                             break;
                         }
 
@@ -73,7 +75,7 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                         }
                     }
                 }
-            } else
+            } //else
             //knight moves
             if(pieceType == Piece::knight){
                 for(int longDir = 0; longDir < 4; longDir++){
@@ -93,6 +95,32 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                                 moves.push_back(move);
                             }
                         }
+                    }
+                }
+            } //else
+
+            if(pieceType == Piece::pawn){
+                int forward = mTurnToMove == Piece::white ? 1 : -1;
+
+                if(mBoard->getPiece(fileFrom, rankFrom + forward).getColor() == Piece::nocolor){
+                    //there is no piece in front of the pawn, so it can move forward
+                    Move move;
+
+                    move.fileFrom = fileFrom;
+                    move.rankFrom = rankFrom;
+                    move.fileTo = fileFrom;
+                    move.rankTo = rankFrom + forward;
+                    
+                    //if(rankFrom == (foward == 1 ? 1 : 6))
+                    if(mBoard->getPiece(fileFrom, rankFrom + forward*2).getColor() == Piece::nocolor){
+                        //there is no piece in front of the pawn, so it can move forward
+                        Move move;
+
+                        move.fileFrom = fileFrom;
+                        move.rankFrom = rankFrom;
+                        move.fileTo = fileFrom;
+                        move.rankTo = rankFrom + forward*2;
+                        
                     }
                 }
             }
@@ -117,18 +145,29 @@ char Game::rankToInt(int rank){
     return '0' + rank + 1;
 }
 
+int Game::charToFile(char file){
+    if(file < 'a' || file > 'h'){
+        return -1;
+    }
+    return (int)(file - 'a');
+}
+
+int Game::charToRank(char rank){
+    return (int)(rank - '0') - 1;
+}
+
 std::string Game::moveToString(Move move){
     std::string str = "";
     
-    Piece pPieceMoving = mBoard->getPiece(move.fileFrom, move.rankFrom);
+    Piece pieceMoving = mBoard->getPiece(move.fileFrom, move.rankFrom);
 
-    if(pPieceMoving.getType() != Piece::pawn){
-        str += LettersManip::toUpperCase((Piece::pieceToChar.at(pPieceMoving.getType())));
+    if(pieceMoving.getType() != Piece::pawn){
+        str += LettersManip::toUpperCase((Piece::pieceToChar.at(pieceMoving.getType())));
     }
 
     //if the move is a capture, mark it as such
     if(mBoard->getPiece(move.fileTo, move.rankTo).getType() != Piece::notype){
-        if(pPieceMoving.getType() == Piece::pawn){
+        if(pieceMoving.getType() == Piece::pawn){
             str += fileToChar(move.fileFrom);
         }
         str += "x";
@@ -138,4 +177,8 @@ std::string Game::moveToString(Move move){
     str += rankToInt(move.rankTo);
     
     return str;
+}
+
+Board& Game::getBoard(){
+    return *mBoard;
 }
