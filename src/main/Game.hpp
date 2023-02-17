@@ -57,6 +57,11 @@ public:
     /// @note checks, checkmates, and castles have not been added yet
     std::string moveToString(Move move);
 
+    /// @brief gives a string for multiple moves
+    /// @param moves the list of moves to get as a string as a vector
+    /// @return the human names for each move on it's own line
+    std::string movesToString(std::vector<Move> moves);
+
     /// @brief converts a character to the corrosponding file int
     /// @param file the char to convert 
     /// @return the int that corrosponds to the move

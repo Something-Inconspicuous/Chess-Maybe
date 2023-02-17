@@ -97,7 +97,7 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                         }
                     }
                 }
-            } //else
+            } else
 
             if(pieceType == Piece::pawn){
                 int forward = mTurnToMove == Piece::white ? 1 : -1;
@@ -176,6 +176,19 @@ std::string Game::moveToString(Move move){
     str += fileToChar(move.fileTo);
     str += rankToInt(move.rankTo);
     
+    return str;
+}
+
+std::string Game::movesToString(std::vector<Move> moves){
+    if(moves.size() == 0){
+        return "no moves found";
+    }
+
+    std::string str = "";
+    for(Move move : moves){
+        str += this->moveToString(move) + "\n";
+    }
+
     return str;
 }
 

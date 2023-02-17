@@ -3,18 +3,6 @@
 
 using namespace std;
 
-void printMoves(vector<Move> moves, Game game){
-    if(moves.size() == 0){
-        cout << "no moves found" << endl;
-    } else{
-        for (Move m : moves){
-            //cout<<m.fileFrom<<":"<<m.rankFrom<<"->"<<m.fileTo<<":"<<m.rankTo<<endl;
-            cout << game.moveToString(m) << endl;
-        }
-        
-    }
-}
-
 Move getMove(){
     string inp;
     char c;
@@ -59,6 +47,7 @@ Move getMove(){
 
     return move;
 }
+
 // Hi people -Your biggest fan, Cow
 int main(){
     //all of this is testing right now
@@ -72,12 +61,9 @@ int main(){
 
     std::vector<Move> moves = game.getMovesFor(1, 0);
 
-    printMoves(moves, game);
+    cout<<game.movesToString(moves)<<endl;
 
     cout << "after move" << endl << game.boardAsString() << endl;
-
-    cout << game.getBoard().getPiece(2, 2).toString() << endl;
-    cout << game.getBoard().getPiece(1, 0).toString() << endl;
 
     //cout<<"test"<<endl;
 
