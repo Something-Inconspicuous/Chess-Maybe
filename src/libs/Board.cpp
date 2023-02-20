@@ -169,15 +169,14 @@ Piece Board::getPiece(int file, int rank){
 void Board::makeMove(Move move){
     //cout<<move.fileFrom<<":"<<move.rankFrom<<"->"<<move.fileTo<<":"<<move.rankTo;
 
-    if(move.fileFrom < 0 || move.fileFrom > 7){
+    if(move.fileFrom < 0 || move.fileFrom > 7)
         throw invalid_argument("move.fileFrom: Index out of bounds");
-    } else if(move.fileTo < 0 || move.fileTo > 7){
+    if(move.fileTo < 0 || move.fileTo > 7)
         throw invalid_argument("move.fileTo: Index out of bounds");
-    } else if(move.rankFrom < 0 || move.rankFrom > 7){
+    if(move.rankFrom < 0 || move.rankFrom > 7)
         throw invalid_argument("move.rankFrom: Index out of bounds");
-    } else if(move.rankTo < 0 || move.rankTo > 7){
+    if(move.rankTo < 0 || move.rankTo > 7)
         throw invalid_argument("move.rankTo: Index out of bounds");
-    }
 
     //after swapping, the piece on the square from is now stored in the square to
     std::swap(mPieces[move.fileTo][move.rankTo], mPieces[move.fileFrom][move.rankFrom]);

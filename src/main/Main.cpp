@@ -59,7 +59,7 @@ int main(){
     
     game.makeMove(move);
 
-    std::vector<Move> moves = game.getMovesFor(1, 0);
+    std::vector<Move> moves = game.getMovesFor(1, 1);
 
     cout<<game.movesToString(moves)<<endl;
 

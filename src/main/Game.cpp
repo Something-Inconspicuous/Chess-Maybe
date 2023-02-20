@@ -110,6 +110,8 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                     move.rankFrom = rankFrom;
                     move.fileTo = fileFrom;
                     move.rankTo = rankFrom + forward;
+
+                    moves.push_back(move);
                     
                     //if(rankFrom == (foward == 1 ? 1 : 6))
                     if(mBoard->getPiece(fileFrom, rankFrom + forward*2).getColor() == Piece::nocolor){
@@ -120,6 +122,8 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                         move.rankFrom = rankFrom;
                         move.fileTo = fileFrom;
                         move.rankTo = rankFrom + forward*2;
+
+                        moves.push_back(move);
                         
                     }
                 }
