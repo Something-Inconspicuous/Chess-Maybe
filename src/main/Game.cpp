@@ -166,7 +166,7 @@ std::vector<Move> Game::generateKnightMoves(int file, int rank){
 
 std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
     if(forward != 1 && forward != -1)
-        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": forward cannot be " + forward + " must be 1 or -1");
+        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": forward cannot be " + (forward + "") + " must be 1 or -1");
 
     vector<Move> moves;
     if(mBoard->getPiece(file, rank + forward).getColor() == Piece::nocolor){
@@ -323,10 +323,10 @@ bool Game::squareIsAttacked(int file, int rank){
             if(fileToCheck < 0 || fileToCheck > 7 || rankToCheck < 0 || rankToCheck > 7)
                 break;
 
-            if(mBoard.getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
                 break;
 
-            Piece::type pieceType = mBoard.getPiece(fileToCheck, rankToCheck).getType();
+            Piece::type pieceType = mBoard->getPiece(fileToCheck, rankToCheck).getType();
             if(pieceType == Piece::queen || pieceType == Piece::rook)
                 return true;
         }
@@ -341,10 +341,10 @@ bool Game::squareIsAttacked(int file, int rank){
             if(fileToCheck < 0 || fileToCheck > 7 || rankToCheck < 0 || rankToCheck > 7)
                 break;
                 
-            if(mBoard.getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
                 break;
 
-            Piece::type pieceType = mBoard.getPiece(fileToCheck, rankToCheck).getType();
+            Piece::type pieceType = mBoard->getPiece(fileToCheck, rankToCheck).getType();
             if(pieceType == Piece::queen || pieceType == Piece::bishop)
                 return true;
         }
@@ -374,7 +374,7 @@ bool Game::squareIsAttacked(int file, int rank){
         if(rank - forward >= 0 && rank - forward <= 7)
             if(mBoard->getPiece(file + 1, rank - forward).getColor() != mTurnToMove &&
                 mBoard->getPiece(file + 1, rank - forward).getType() == Piece::pawn)
-                return true
+                return true;
     }
     if(file - 1 >= 0){
         int forward = mTurnToMove == Piece::white ? 1 : -1;
@@ -383,16 +383,16 @@ bool Game::squareIsAttacked(int file, int rank){
         if(rank - forward >= 0 && rank - forward <= 7)
             if(mBoard->getPiece(file - 1, rank - forward).getColor() != mTurnToMove &&
                 mBoard->getPiece(file - 1, rank - forward).getType() == Piece::pawn)
-                return true
+                return true;
     }
 
     //checking for king attacks
     for(int dir = 0; dir < 8; dir++){
-        int fileToCheck = file + offsets[dir][0];
-        int rankToCheck = rank + offsets[dir][1];
+        int fileToCheck = file + Board::offsets[dir][0];
+        int rankToCheck = rank + Board::offsets[dir][1];
 
-        if(mBoard->getPiece(file - 1, rank - forward).getColor() != mTurnToMove &&
-            mBoard->getPiece(file - 1, rank - forward).getType() == Piece::pawn)
+        if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove &&
+            mBoard->getPiece(fileToCheck, rankToCheck).getType() == Piece::king)
             return true;
     }
 
