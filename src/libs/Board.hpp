@@ -4,6 +4,18 @@
 
 class Board{
     public:
+        /// @brief the file the white king is on; used for quick lookups
+        int wKingFile;
+
+        /// @brief the rank the white king is on; used for quick lookups
+        int wKingRank;
+
+        /// @brief the file the black king is on; used for quick lookups
+        int bKingFile;
+
+        /// @brief the rank the black king is on; used for quick lookups
+        int bKingRank;
+
         Board();
         ~Board();
 
@@ -15,6 +27,12 @@ class Board{
         /// for more information on FEN and a formal specification
         /// @param fen the FEN string to create the board from 
         Board(std::string);
+
+        /// @brief Copy constructer, copies the pieces on the board
+        /// @param board the board to copy
+        Board(const Board& board);
+
+        Board clone();
         
         /// @brief the rank and file offsets to move a direction
         /// @param direction which direction to get the offset of

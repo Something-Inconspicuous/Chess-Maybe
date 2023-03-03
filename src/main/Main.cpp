@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Game.hpp"
 
+#define clrscr() {for(int i = 0; i < 50; i++){std::cout<<std::endl;}};
+
 using namespace std;
 
 Move getMove(){
@@ -50,23 +52,26 @@ Move getMove(){
 
 // Hi people -Your biggest fan, Cow
 int main(){
+    clrscr();
     //all of this is testing right now
     
-    Game game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
+    Game game(Game::START_FEN);
     cout << game.boardAsString() << endl;
 
-    Move move = getMove();
+    //Move move = getMove();
     
-    game.makeMove(move);
+    //game.makeMove(move);
 
-    std::vector<Move> moves = game.getMovesFor(1, 1);
+    std::vector<Move> moves = game.getLegalMovesFor(1, 0);
+    //cout << ":" << game.checkLegality(moves.at(0)) << endl;
 
     cout<<game.movesToString(moves)<<endl;
 
-    cout << "after move" << endl << game.boardAsString() << endl;
+    cout << "after move" << endl << game.boardAsString(moves) << endl;
 
     //cout<<"test"<<endl;
-
+    
 
     //game.~Game();
     
