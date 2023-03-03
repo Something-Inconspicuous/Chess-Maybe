@@ -166,7 +166,7 @@ std::vector<Move> Game::generateKnightMoves(int file, int rank){
 
 std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
     if(forward != 1 && forward != -1)
-        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": file: Index out of bounds");
+        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": forward cannot be " + forward + " must be 1 or -1");
 
     vector<Move> moves;
     if(mBoard->getPiece(file, rank + forward).getColor() == Piece::nocolor){
@@ -223,6 +223,7 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
             moves.push_back(move);
         }
     }
+    return moves;
 }
 
 std::vector<Move> Game::getLegalMovesFor(int file, int rank){
