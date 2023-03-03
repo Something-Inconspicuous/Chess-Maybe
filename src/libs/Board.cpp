@@ -1,5 +1,6 @@
 #include "Board.hpp"
 #include "LettersManip.hpp"
+#include "stdexcept"
 #include "cstring"
 
 #define forRank for(int rank = 0; rank < 8; rank++)

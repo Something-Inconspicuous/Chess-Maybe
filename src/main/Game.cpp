@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "../libs/LettersManip.hpp"
+#include "stdexcept"
 #include "algorithm"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
@@ -55,123 +56,21 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
         if(mBoard->getPiece(fileFrom, rankFrom).getColor() != Piece::nocolor && pieceType != Piece::notype){
             //"ray" piece moves
             if(pieceType == Piece::queen || pieceType == Piece::rook || pieceType == Piece::bishop){
-                //if the piece is a bishop, we only look at the last 4 diagonal directions
-                int dirStart = pieceType == Piece::bishop ? 4 : 0;
-                //if the piece is a rook, we only look at the first 4 orthoganal directions
-                int dirEnd = pieceType == Piece::rook ? 4 : 8;
-
-                for(int dir = dirStart; dir < dirEnd; dir++){
-                    for(int dist = 1; dist < 8; dist++){
-                        int file = fileFrom + dist*Board::offsets[dir][0];
-                        int rank = rankFrom + dist*Board::offsets[dir][1];
-
-                        if(file > 7 || file < 0 || rank > 7 || rank < 0){
-                            //we have hit the edge the board, so move to the next direction
-                            break;
-                        }
-
-                        if(mBoard->getPiece(file, rank).getColor() == mTurnToMove){
-                            //there is one of our pieces blocking us, so move too the next direction
-                            break;
-                        }
-
-                        Move move;
-
-                        move.fileFrom = fileFrom;
-                        move.rankFrom = rankFrom;
-                        move.fileTo = file;
-                        move.rankTo = rank;
-
-                        moves.push_back(move);
-
-                        if(mBoard->getPiece(file, rank).getColor() != Piece::nocolor){
-                            //we are capturing a piece, move to the next direction
-                            break;
-                        }
-                    }
-                }
+                vector<Move> rayMoves = generateRayMoves(fileFrom, rankFrom, pieceType != Piece::bishop, pieceType != Piece::rook);
+                moves.insert(moves.end(), rayMoves.begin(), rayMoves.end());
             } else
+
             //knight moves
             if(pieceType == Piece::knight){
-                for(int longDir = 0; longDir < 4; longDir++){
-                    for(int shortDir = 0; shortDir < 2; shortDir++){
-                        int fileToCheck = fileFrom + Board::offsets[longDir][0]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][0];
-                        int rankToCheck = rankFrom + Board::offsets[longDir][1]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][1];
-
-                        if(fileToCheck > 7 || fileToCheck < 0 || rankToCheck > 7 || rankToCheck < 0){
-                            //square is outside board
-                        } else{
-                            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove){
-                                Move move;
-                                move.fileFrom = fileFrom;
-                                move.fileTo = fileToCheck;
-                                move.rankFrom = rankFrom;
-                                move.rankTo = rankToCheck;
-                                moves.push_back(move);
-                            }
-                        }
-                    }
-                }
+                vector<Move> knightMoves = generateKnightMoves(fileFrom, rankFrom);
+                moves.insert(moves.end(), knightMoves.begin(), knightMoves.end());
             } else
 
             //pawn moves
             if(pieceType == Piece::pawn){
-                int forward = mTurnToMove == Piece::white ? 1 : -1;
-
-                if(mBoard->getPiece(fileFrom, rankFrom + forward).getColor() == Piece::nocolor){
-                    //there is no piece in front of the pawn, so it can move forward
-                    Move move;
-
-                    move.fileFrom = fileFrom;
-                    move.rankFrom = rankFrom;
-                    move.fileTo = fileFrom;
-                    move.rankTo = rankFrom + forward;
-
-                    moves.push_back(move);
-                    
-                    if(rankFrom == (forward == 1 ? 1 : 6)){
-                        if(mBoard->getPiece(fileFrom, rankFrom + forward*2).getColor() == Piece::nocolor){
-                            //there is no piece in front of the pawn, so it can move forward
-                            Move move;
-
-                            move.fileFrom = fileFrom;
-                            move.rankFrom = rankFrom;
-                            move.fileTo = fileFrom;
-                            move.rankTo = rankFrom + forward*2;
-
-                            moves.push_back(move);
-                            
-                        }
-                    }
-                    
-                }
-
-                //checks diagonals
-                if(fileFrom + 1 <= 7){
-                    if(mBoard->getPiece(fileFrom + 1, rankFrom + forward).getColor() ==
-                    (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
-                        Move move;
-                        move.fileFrom = fileFrom;
-                        move.rankFrom = rankFrom;
-                        move.fileTo = fileFrom + 1;
-                        move.rankTo = rankFrom + forward;
-
-                        moves.push_back(move);
-                    }
-                }
-
-                if(fileFrom - 1 >= 0){
-                    if(mBoard->getPiece(fileFrom - 1, rankFrom + forward).getColor() ==
-                    (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
-                        Move move;
-                        move.fileFrom = fileFrom;
-                        move.rankFrom = rankFrom;
-                        move.fileTo = fileFrom - 1;
-                        move.rankTo = rankFrom + forward;
-
-                        moves.push_back(move);
-                    }
-                }
+                vector<Move> pawnMoves = generatePawnMoves(fileFrom, rankFrom, 
+                    mBoard->getPiece(fileFrom, rankFrom).getColor() == Piece::white ? 1 : -1);
+                moves.insert(moves.end(), pawnMoves.begin(), pawnMoves.end());
             } else
             
             //king moves
@@ -198,6 +97,132 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
     }
 
     return moves;
+}
+
+std::vector<Move> Game::generateRayMoves(int file, int rank, bool orthoganal, bool diagonal){
+    vector<Move> moves;
+ 
+    //when looking for orthoganal directions, we need to look at the first four, else, skip them
+    int dirStart = orthoganal ? 0 : 4;
+
+    //when looking for diagonal directions, we need to look at the last four, else, skip them
+    int dirEnd = diagonal ? 8 : 4;
+
+    for(int dir = dirStart; dir < dirEnd; dir++){
+        for(int dist = 1; dist < 8; dist++){
+            int fileTo = file + dist*Board::offsets[dir][0];
+            int rankTo = rank + dist*Board::offsets[dir][1];
+
+            if(fileTo > 7 || fileTo < 0 || rankTo > 7 || rankTo < 0){
+                //we have hit the edge the board, so move to the next direction
+                break;
+            }
+
+            if(mBoard->getPiece(file, rank).getColor() == mTurnToMove){
+                //there is one of our pieces blocking us, so move too the next direction
+                break;
+            }
+
+            Move move;
+
+            move.fileFrom = file;
+            move.rankFrom = rank;
+            move.fileTo = fileTo;
+            move.rankTo = rankTo;
+
+            moves.push_back(move);
+
+            if(mBoard->getPiece(file, rank).getColor() != Piece::nocolor){
+                //we are capturing a piece, move to the next direction
+                break;
+            }
+        }
+    }
+    return moves;
+}
+
+std::vector<Move> Game::generateKnightMoves(int file, int rank){
+    vector<Move> moves;
+    for(int longDir = 0; longDir < 4; longDir++){
+        for(int shortDir = 0; shortDir < 2; shortDir++){
+            int fileToCheck = file + Board::offsets[longDir][0]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][0];
+            int rankToCheck = rank + Board::offsets[longDir][1]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][1];
+
+            if(fileToCheck > 7 || fileToCheck < 0 || rankToCheck > 7 || rankToCheck < 0)
+                continue;
+            
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove){
+                Move move;
+                move.fileFrom = file;
+                move.fileTo = fileToCheck;
+                move.rankFrom = rank;
+                move.rankTo = rankToCheck;
+                moves.push_back(move);
+            }
+        }
+    }
+    return moves;
+}
+
+std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
+    if(forward != 1 && forward != -1)
+        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": file: Index out of bounds");
+
+    vector<Move> moves;
+    if(mBoard->getPiece(file, rank + forward).getColor() == Piece::nocolor){
+        //there is no piece in front of the pawn, so it can move forward
+        Move move;
+
+        move.fileFrom = file;
+        move.rankFrom = rank;
+        move.fileTo = file;
+        move.rankTo = rank + forward;
+
+        moves.push_back(move);
+        
+        if(rank == (forward == 1 ? 1 : 6)){
+            if(mBoard->getPiece(file, rank + forward*2).getColor() == Piece::nocolor){
+                //there is no piece in front of the pawn, so it can move forward
+                Move move;
+
+                move.fileFrom = file;
+                move.rankFrom = rank;
+                move.fileTo = file;
+                move.rankTo = rank + forward*2;
+
+                moves.push_back(move);
+                
+            }
+        }
+        
+    }
+
+    //checks diagonals
+    if(file + 1 <= 7){
+        if(mBoard->getPiece(file + 1, rank + forward).getColor() ==
+        (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
+            Move move;
+            move.fileFrom = file;
+            move.rankFrom = rank;
+            move.fileTo = file + 1;
+            move.rankTo = rank + forward;
+
+            moves.push_back(move);
+        }
+    }
+
+    if(file - 1 >= 0){
+        if(mBoard->getPiece(file - 1, rank + forward).getColor() ==
+        (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
+            Move move;
+            move.fileFrom = file;
+            move.rankFrom = rank;
+            move.fileTo = file - 1;
+            move.rankTo = rank + forward;
+
+            moves.push_back(move);
+        }
+    }
 }
 
 std::vector<Move> Game::getLegalMovesFor(int file, int rank){
@@ -399,20 +424,22 @@ bool Game::checkLegality(Move move){
     //later this should be changed so that it checks if the king can be attacked by checking
     //all moves that another piece could make
     //so for example, from the king we check if there are any knights at knight opposition
-    forRank{
-        forFile{
-            if(mBoard->getPiece(file, rank).getColor() == mTurnToMove)
-                continue;
-            
-            vector<Move> moves = getAttacksFor(file, rank);
-            bool kingInCheck = moveIsGoingTo(moves, *kingFile, *kingRank);
-            if(kingInCheck){
-                delete mBoard;
-                mBoard = new Board(storeBoard);
-                return false;
-            }
-        }
-    }
+    //forRank{
+    //    forFile{
+    //        if(mBoard->getPiece(file, rank).getColor() == mTurnToMove)
+    //            continue;
+    //        
+    //        vector<Move> moves = getAttacksFor(file, rank);
+    //        bool kingInCheck = moveIsGoingTo(moves, *kingFile, *kingRank);
+    //        if(kingInCheck){
+    //            delete mBoard;
+    //            mBoard = new Board(storeBoard);
+    //            return false;
+    //        }
+    //    }
+    //}
+
+
     delete mBoard;
     mBoard = new Board(storeBoard);
     return true;

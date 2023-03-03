@@ -11,8 +11,6 @@ private:
     /// @brief a list (as a vector) that keeps track of what squares the enemy attacks
     std::vector<Move> mAttackingMoves;
 
-    std::vector<Board> previousBoardStates;
-
     /// @brief changes the turn to move to the opposite color
     void inline changeTurn();
 
@@ -49,6 +47,28 @@ private:
     /// @param move the move to check
     /// @return true if the move is legal, false otherwise
     bool checkLegality(Move move);
+
+    /// @brief generates the moves that a ray piece could take if on a given square
+    /// @param file the file of the given square
+    /// @param rank the rank of the given square
+    /// @param orthoganal whether or not to check for orthoganal moves
+    /// @param diagonal whether or not to check for diagonal moves
+    /// @return a list (as a vector) of every move found
+    std::vector<Move> generateRayMoves(int file, int rank, bool orthoganal, bool diagonal);
+
+    /// @brief creates all moves that a knight could take if on the given square
+    /// @param file the file of the given square
+    /// @param rank the rank of the given square
+    /// @return a list (as a vector) of every move found
+    std::vector<Move> generateKnightMoves(int file, int rank);
+
+    /// @brief creates all the moves that a pawn could take if on a given square
+    /// @param file the file of the given square
+    /// @param rank the rank of the given square
+    /// @param forward either 1 or -1; the direction that it is 'forward' for the purpose of pawn moves
+    /// @return a list (as a vector) of every move found
+    std::vector<Move> generatePawnMoves(int file, int rank, int forward);
+
 public:
     const static std::string START_FEN;
 
