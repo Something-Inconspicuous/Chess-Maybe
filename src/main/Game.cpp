@@ -312,7 +312,92 @@ Board& Game::getBoard(){
 }
 
 bool Game::squareIsAttacked(int file, int rank){
-    return moveIsGoingTo(mAttackingMoves, file, rank);
+    //return moveIsGoingTo(mAttackingMoves, file, rank);
+
+    //checking for orthoganal attacks from rooks and queens
+    for(int dir = 0; dir < 4; dir++){
+        for(int dist = 0; dist < 8; dist++){
+            int fileToCheck = file + dist*Board::offsets[dir][0];
+            int rankToCheck = rank + dist*Board::offsets[dir][1];
+
+            if(fileToCheck < 0 || fileToCheck > 7 || rankToCheck < 0 || rankToCheck > 7)
+                break;
+
+            if(mBoard.getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
+                break;
+
+            Piece::type pieceType = mBoard.getPiece(fileToCheck, rankToCheck).getType();
+            if(pieceType == Piece::queen || pieceType == Piece::rook)
+                return true;
+        }
+    }
+
+    //checking for diagonal attacks from bishops and queens
+    for(int dir = 4; dir < 8; dir++){
+        for(int dist = 0; dist < 8; dist++){
+            int fileToCheck = file + dist*Board::offsets[dir][0];
+            int rankToCheck = rank + dist*Board::offsets[dir][1];
+
+            if(fileToCheck < 0 || fileToCheck > 7 || rankToCheck < 0 || rankToCheck > 7)
+                break;
+                
+            if(mBoard.getPiece(fileToCheck, rankToCheck).getColor() == mTurnToMove)
+                break;
+
+            Piece::type pieceType = mBoard.getPiece(fileToCheck, rankToCheck).getType();
+            if(pieceType == Piece::queen || pieceType == Piece::bishop)
+                return true;
+        }
+    }
+
+    //checking for knight attacks
+    for(int longDir = 0; longDir < 4; longDir++){
+        for(int shortDir = 0; shortDir < 2; shortDir++){
+            int fileToCheck = file + Board::offsets[longDir][0]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][0];
+            int rankToCheck = rank + Board::offsets[longDir][1]*2 + Board::offsets[longDir < 2 ? shortDir + 2 : shortDir][1];
+
+            if(fileToCheck > 7 || fileToCheck < 0 || rankToCheck > 7 || rankToCheck < 0)
+                continue;
+            
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove &&
+                mBoard->getPiece(fileToCheck, rankToCheck).getType() == Piece::knight){
+                return true;
+            }
+        }
+    }
+
+    //checking for pawn attacks
+    if(file + 1 <= 7){
+        int forward = mTurnToMove == Piece::white ? 1 : -1;
+
+        //check if there could be a pawn behind the square
+        if(rank - forward >= 0 && rank - forward <= 7)
+            if(mBoard->getPiece(file + 1, rank - forward).getColor() != mTurnToMove &&
+                mBoard->getPiece(file + 1, rank - forward).getType() == Piece::pawn)
+                return true
+    }
+    if(file - 1 >= 0){
+        int forward = mTurnToMove == Piece::white ? 1 : -1;
+
+        //check if there could be a pawn behind the square
+        if(rank - forward >= 0 && rank - forward <= 7)
+            if(mBoard->getPiece(file - 1, rank - forward).getColor() != mTurnToMove &&
+                mBoard->getPiece(file - 1, rank - forward).getType() == Piece::pawn)
+                return true
+    }
+
+    //checking for king attacks
+    for(int dir = 0; dir < 8; dir++){
+        int fileToCheck = file + offsets[dir][0];
+        int rankToCheck = rank + offsets[dir][1];
+
+        if(mBoard->getPiece(file - 1, rank - forward).getColor() != mTurnToMove &&
+            mBoard->getPiece(file - 1, rank - forward).getType() == Piece::pawn)
+            return true;
+    }
+
+    //if no piece that could attack the square was found, return false;
+    return false;
 }
 
 vector<Move> Game::getAttacksFor(int fileFrom, int rankFrom){
@@ -439,8 +524,11 @@ bool Game::checkLegality(Move move){
     //        }
     //    }
     //}
-
-
+    if(squareIsAttacked(*kingFile, *kingRank)){
+        delete mBoard;
+        mBoard = new Board(storeBoard);
+        return false;
+    }
     delete mBoard;
     mBoard = new Board(storeBoard);
     return true;
