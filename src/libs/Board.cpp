@@ -194,9 +194,13 @@ string Board::toString(vector<Move> moves){
 
 Piece Board::getPiece(int file, int rank){
     if(file < 0 || file > 7)
-        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": file: Index out of bounds");
-    else if(rank < 0 || rank > 7)
-        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": rank: Index out of bounds");
+        throw invalid_argument(
+            std::string(__FILE__) + "." + std::to_string(__LINE__) + 
+            ": file cannot be " + std::to_string(file));
+    if(rank < 0 || rank > 7)
+        throw invalid_argument(
+            std::string(__FILE__) + "." + std::to_string(__LINE__) + 
+            ": rank cannot be " + std::to_string(rank));
 
     if(mPieces[file][rank]){
         return *mPieces[file][rank];

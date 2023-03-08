@@ -46,6 +46,11 @@ string Game::boardAsString(std::vector<Move> moves){
 }
 
 std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
+
+    if(fileFrom < 0 || fileFrom > 7)
+        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": fileFrom: Index out of bounds");
+    if(rankFrom < 0 || rankFrom > 7)
+        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": rankFrom: Index out of bounds");
     
     std::vector<Move> moves;
     
@@ -390,6 +395,9 @@ bool Game::squareIsAttacked(int file, int rank){
     for(int dir = 0; dir < 8; dir++){
         int fileToCheck = file + Board::offsets[dir][0];
         int rankToCheck = rank + Board::offsets[dir][1];
+
+        if(fileToCheck < 0 || fileToCheck > 7 || rankToCheck < 0 || rankToCheck > 7)
+            continue;
 
         if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove &&
             mBoard->getPiece(fileToCheck, rankToCheck).getType() == Piece::king)

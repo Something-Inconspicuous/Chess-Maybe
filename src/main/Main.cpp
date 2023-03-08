@@ -1,11 +1,16 @@
 #include <iostream>
 #include "Game.hpp"
 
-#define clrscr() {for(int i = 0; i < 50; i++){std::cout<<std::endl;}};
-
 using namespace std;
 
-Move getMove(){
+inline void clrscr() {
+    for(int i = 0; i < 50; i++){
+        std::cout<<"\n";
+    }
+    std::cout<<std::endl;
+}
+
+inline Move getMove(Game& game){
     string inp;
     char c;
     Move move;
@@ -27,8 +32,11 @@ Move getMove(){
 
     c = inp[0];
     move.rankFrom = Game::charToRank(c);
-    //cout<<move.rankFrom<<endl;
+    cout<<move.rankFrom<<endl;
     
+    //show the legal moves
+    vector<Move> moves = game.getLegalMovesFor(move.fileFrom, move.rankFrom);
+    cout<< game.boardAsString(moves) <<endl;
 
     cout << "end file: ";
     cin >> inp;
@@ -59,16 +67,16 @@ int main(){
     Game game(Game::START_FEN);
     cout << game.boardAsString() << endl;
 
-    //Move move = getMove();
+    Move move = getMove(game);
     
-    //game.makeMove(move);
+    game.makeMove(move);
 
-    std::vector<Move> moves = game.getLegalMovesFor(1, 0);
+    //std::vector<Move> moves = game.getLegalMovesFor(1, 0);
     //cout << ":" << game.checkLegality(moves.at(0)) << endl;
 
-    cout<<game.movesToString(moves)<<endl;
+    //cout<<game.movesToString(moves)<<endl;
 
-    cout << "after move" << endl << game.boardAsString(moves) << endl;
+    cout << "after move" << endl << game.boardAsString() << endl;
 
     //cout<<"test"<<endl;
     
