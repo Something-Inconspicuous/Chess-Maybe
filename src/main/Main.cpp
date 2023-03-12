@@ -1,16 +1,20 @@
 #include <iostream>
+#include "algorithm"
+#include "../libs/LettersManip.hpp"
 #include "Game.hpp"
 
 using namespace std;
 
 inline void clrscr() {
-    for(int i = 0; i < 50; i++){
-        std::cout<<"\n";
-    }
-    std::cout<<std::endl;
+    //for(int i = 0; i < 50; i++){
+    //    std::cout<<"\n";
+    //}
+    //std::cout<<std::endl;
+    //std::cout << "\033[H\033[2J" << std::endl;
 }
 
-inline Move getMove(Game& game){
+Move getMove(Game& game){
+    getMove:
     string inp;
     char c;
     Move move;
@@ -32,10 +36,13 @@ inline Move getMove(Game& game){
 
     c = inp[0];
     move.rankFrom = Game::charToRank(c);
-    cout<<move.rankFrom<<endl;
     
     //show the legal moves
     vector<Move> moves = game.getLegalMovesFor(move.fileFrom, move.rankFrom);
+    if(moves.size() == 0){
+        cout << "no legal moves" <<endl;
+        goto getMove;
+    }
     cout<< game.boardAsString(moves) <<endl;
 
     cout << "end file: ";
@@ -58,30 +65,77 @@ inline Move getMove(Game& game){
     return move;
 }
 
+bool playerTurn(Game& game, const Piece::color playerColor){
+    game.changeTurn(playerColor);
+
+    cout << (playerColor == Piece::white ? "white" : "black") << " to move" << endl;
+
+    vector<Move> allLegalMoves = game.getAllLegalMoves();
+    if(allLegalMoves.size() == 0){
+        if(game.playerInCheck(playerColor))
+            cout << "Checkmate!" << endl;
+        else
+            cout << "Stalemate!" << endl;
+        return true;
+    }
+
+    //get a move from the user
+    Move move;
+    {bool moveIsValid = false;
+    do{
+        move = getMove(game);
+        moveIsValid = std::find(allLegalMoves.begin(), allLegalMoves.end(), move) != allLegalMoves.end();
+    }while(!moveIsValid);}
+
+    //make the move
+    game.makeMove(move);
+    
+    cout << game.boardAsString() << endl;
+    return false;
+}
+
 // Hi people -Your biggest fan, Cow
 int main(){
     clrscr();
     //all of this is testing right now
-    
+    gameStart:
     //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
     Game game(Game::START_FEN);
     cout << game.boardAsString() << endl;
 
-    Move move = getMove(game);
+    //vector<Move> ms = game.getLegalMovesFor(7, 4);
+    //cout << game.boardAsString(ms);
+    //return 0;
     
-    game.makeMove(move);
+    bool gameIsGoing = true;
+    Piece::color turn = Piece::black;
+    //start as black so that it is changed to white for the first move
+    do{
+        turn = turn == Piece::white ? Piece::black : Piece::white;
 
-    //std::vector<Move> moves = game.getLegalMovesFor(1, 0);
-    //cout << ":" << game.checkLegality(moves.at(0)) << endl;
+        bool gameDidEnd = playerTurn(game, turn);
 
-    //cout<<game.movesToString(moves)<<endl;
+        if(gameDidEnd){
+            gameIsGoing = false;
+        }
+    } while (gameIsGoing);
 
-    cout << "after move" << endl << game.boardAsString() << endl;
+    playAgain:
+    string inp;
+    cout << "Play again? ";
+    cin >> inp;
+    //trim the string
+    while(inp[0] == ' '){
+        inp.replace(0, 1, "");
+    }
+    inp[0] = LettersManip::toLowerCase(inp[0]);
 
-    //cout<<"test"<<endl;
-    
-
-    //game.~Game();
-    
-    return 0;
+    if(inp[0] == 'y'){
+        goto gameStart;
+    } else if(inp[0] == 'n'){
+        return 0;
+    } else{
+        cout << "invalid input" << endl;
+        goto playAgain;
+    }
 } 

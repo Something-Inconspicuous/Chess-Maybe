@@ -2,6 +2,7 @@
 #include "../libs/LettersManip.hpp"
 #include "stdexcept"
 #include "algorithm"
+#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
@@ -19,8 +20,12 @@ Game::~Game(){
     delete mBoard;
 }
 
-void Game::changeTurn(){
+void Game::cTurn(){
     mTurnToMove = mTurnToMove == Piece::white ? Piece::black : Piece::white;
+}
+
+void Game::cTurn(const Piece::color col){
+    mTurnToMove = col;
 }
 
 bool Game::moveIsGoingTo(Move move, int file, int rank){
@@ -117,13 +122,14 @@ std::vector<Move> Game::generateRayMoves(int file, int rank, bool orthoganal, bo
         for(int dist = 1; dist < 8; dist++){
             int fileTo = file + dist*Board::offsets[dir][0];
             int rankTo = rank + dist*Board::offsets[dir][1];
+            //cout << fileTo << ":" << rankTo << endl;
 
             if(fileTo > 7 || fileTo < 0 || rankTo > 7 || rankTo < 0){
                 //we have hit the edge the board, so move to the next direction
                 break;
             }
 
-            if(mBoard->getPiece(file, rank).getColor() == mTurnToMove){
+            if(mBoard->getPiece(fileTo, rankTo).getColor() == mTurnToMove){
                 //there is one of our pieces blocking us, so move too the next direction
                 break;
             }
@@ -137,7 +143,7 @@ std::vector<Move> Game::generateRayMoves(int file, int rank, bool orthoganal, bo
 
             moves.push_back(move);
 
-            if(mBoard->getPiece(file, rank).getColor() != Piece::nocolor){
+            if(mBoard->getPiece(fileTo, rankTo).getColor() != Piece::nocolor){
                 //we are capturing a piece, move to the next direction
                 break;
             }
@@ -250,6 +256,18 @@ std::vector<Move> Game::getLegalMovesFor(int file, int rank){
     return filteredMoves;
 }
 
+std::vector<Move> Game::getAllLegalMoves(){
+    std::vector<Move> moves;
+
+    forRank{
+        forFile{
+            std::vector<Move> movesToAdd = getLegalMovesFor(file, rank);
+            moves.insert(moves.end(), movesToAdd.begin(), movesToAdd.end());
+        }
+    }
+
+    return moves;
+}
 
 //representation methods
 
@@ -266,6 +284,7 @@ char Game::rankToInt(int rank){
 }
 
 int Game::charToFile(char file){
+    file = LettersManip::toLowerCase(file);
     if(file < 'a' || file > 'h'){
         return -1;
     }
@@ -321,7 +340,7 @@ bool Game::squareIsAttacked(int file, int rank){
 
     //checking for orthoganal attacks from rooks and queens
     for(int dir = 0; dir < 4; dir++){
-        for(int dist = 0; dist < 8; dist++){
+        for(int dist = 1; dist < 8; dist++){
             int fileToCheck = file + dist*Board::offsets[dir][0];
             int rankToCheck = rank + dist*Board::offsets[dir][1];
 
@@ -333,13 +352,16 @@ bool Game::squareIsAttacked(int file, int rank){
 
             Piece::type pieceType = mBoard->getPiece(fileToCheck, rankToCheck).getType();
             if(pieceType == Piece::queen || pieceType == Piece::rook)
-                return true;
+                return true; 
+
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != Piece::nocolor)
+                break;
         }
     }
 
     //checking for diagonal attacks from bishops and queens
     for(int dir = 4; dir < 8; dir++){
-        for(int dist = 0; dist < 8; dist++){
+        for(int dist = 1; dist < 8; dist++){
             int fileToCheck = file + dist*Board::offsets[dir][0];
             int rankToCheck = rank + dist*Board::offsets[dir][1];
 
@@ -351,7 +373,10 @@ bool Game::squareIsAttacked(int file, int rank){
 
             Piece::type pieceType = mBoard->getPiece(fileToCheck, rankToCheck).getType();
             if(pieceType == Piece::queen || pieceType == Piece::bishop)
-                return true;
+                return true; 
+
+            if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != Piece::nocolor)
+                break;
         }
     }
 
@@ -365,9 +390,9 @@ bool Game::squareIsAttacked(int file, int rank){
                 continue;
             
             if(mBoard->getPiece(fileToCheck, rankToCheck).getColor() != mTurnToMove &&
-                mBoard->getPiece(fileToCheck, rankToCheck).getType() == Piece::knight){
-                return true;
-            }
+                mBoard->getPiece(fileToCheck, rankToCheck).getType() == Piece::knight)
+                return true; 
+            
         }
     }
 
@@ -379,7 +404,7 @@ bool Game::squareIsAttacked(int file, int rank){
         if(rank - forward >= 0 && rank - forward <= 7)
             if(mBoard->getPiece(file + 1, rank - forward).getColor() != mTurnToMove &&
                 mBoard->getPiece(file + 1, rank - forward).getType() == Piece::pawn)
-                return true;
+                return true; 
     }
     if(file - 1 >= 0){
         int forward = mTurnToMove == Piece::white ? 1 : -1;
@@ -388,7 +413,7 @@ bool Game::squareIsAttacked(int file, int rank){
         if(rank - forward >= 0 && rank - forward <= 7)
             if(mBoard->getPiece(file - 1, rank - forward).getColor() != mTurnToMove &&
                 mBoard->getPiece(file - 1, rank - forward).getType() == Piece::pawn)
-                return true;
+                return true; 
     }
 
     //checking for king attacks
@@ -506,38 +531,22 @@ void Game::updateAttackingMoves(){
 }
 
 bool Game::checkLegality(Move move){
-    int* kingFile = mTurnToMove == Piece::white ? &mBoard->wKingFile : &mBoard->bKingFile;
-    int* kingRank = mTurnToMove == Piece::white ? &mBoard->wKingRank : &mBoard->bKingRank;
-
     Board storeBoard(*mBoard);
 
-    mBoard->makeMove(move);
+    mBoard->makeMove(move);   
+    
+    int kingFile = mTurnToMove == Piece::white ? mBoard->wKingFile : mBoard->bKingFile;
+    int kingRank = mTurnToMove == Piece::white ? mBoard->wKingRank : mBoard->bKingRank;
+    //cout << "king at " << kingFile << ":" << kingRank << endl;
 
-
-    //TODO: I have an idea for checking for checks
-    //later this should be changed so that it checks if the king can be attacked by checking
-    //all moves that another piece could make
-    //so for example, from the king we check if there are any knights at knight opposition
-    //forRank{
-    //    forFile{
-    //        if(mBoard->getPiece(file, rank).getColor() == mTurnToMove)
-    //            continue;
-    //        
-    //        vector<Move> moves = getAttacksFor(file, rank);
-    //        bool kingInCheck = moveIsGoingTo(moves, *kingFile, *kingRank);
-    //        if(kingInCheck){
-    //            delete mBoard;
-    //            mBoard = new Board(storeBoard);
-    //            return false;
-    //        }
-    //    }
-    //}
-    if(squareIsAttacked(*kingFile, *kingRank)){
+    if(squareIsAttacked(kingFile, kingRank)){
         delete mBoard;
         mBoard = new Board(storeBoard);
+        //cout << "illegal" << endl;
         return false;
     }
     delete mBoard;
     mBoard = new Board(storeBoard);
+    //cout << "legal" << endl;
     return true;
 }

@@ -12,7 +12,11 @@ private:
     std::vector<Move> mAttackingMoves;
 
     /// @brief changes the turn to move to the opposite color
-    void inline changeTurn();
+    void cTurn();
+
+    /// @brief changes the turn to move to the given color
+    /// @param col the color to set the turn to move to
+    void cTurn(const Piece::color col);
 
     /// @brief checks whether a move's ending square is the same as a given file and rank
     /// @param move the move to check
@@ -94,6 +98,22 @@ public:
     /// @return a string representation of the board
     std::string boardAsString(std::vector<Move> moves);
 
+    /// @brief Changes the turn to move to either the given turn or the other turn if
+    /// no turn is given
+    /// @param col the color whose turn to change the turn to move to to
+    void inline changeTurn(const Piece::color col = Piece::nocolor){
+        if(col == Piece::nocolor)   this->cTurn();
+        else                        this->cTurn(col);
+    }
+
+    /// @brief Checks if a given player is in check
+    /// @param player the color player (white or black) to check if they're in check
+    /// @return true of the given player's king is attacked, false otherwise
+    bool inline playerInCheck(const Piece::color player){
+        if(player == Piece::white)  return squareIsAttacked(mBoard->wKingFile, mBoard->wKingRank);
+        else                        return squareIsAttacked(mBoard->bKingFile, mBoard->wKingRank);
+    }
+
     /// @brief gets the possible moves for a square based on how that piece can move
     /// @param fileFrom {int} the file to move from
     /// @param rankFrom {int} the rank to move from
@@ -105,6 +125,10 @@ public:
     /// @param rank the rank to move from
     /// @return a list (as a vector) of the moves that can legally be played
     std::vector<Move> getLegalMovesFor(int file, int rank);
+
+    /// @brief gets the legal moves for every square
+    /// @return a list (as a vector) of all moves that can be legally played
+    std::vector<Move> getAllLegalMoves();
 
     /// @brief returns the letter of a file
     /// @param file {int} the internal int value of the file
