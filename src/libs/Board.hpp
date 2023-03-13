@@ -55,6 +55,24 @@ class Board{
         /// @throws @ref invalid_argument if the given index is negative or above the size of mPieces
         Piece getPiece(int file, int rank);
 
+        /// @brief returns a reference to the piece at a given square
+        /// @param file the file of the given square
+        /// @param rank the rank of the given square
+        /// @return a reference to the piece at the given square
+        /// @see #pat(int, int)
+        inline Piece& at(const int file, const int rank){
+            return *mPieces[file][rank];
+        }
+
+        /// @brief Returns a reference to a pointer to the piece at a given square.
+        /// Sounds dumb but it makes it modifyable (board.pat(1, 1) = NULL works, for example)
+        /// @param file the file of the given square
+        /// @param rank the rank of the given square
+        /// @return a reference to a pointer to the piece
+        inline Piece*& pat(const int file, const int rank){
+            return mPieces[file][rank];
+        }
+
         /// @brief moves a piece on the board
         /// @param move Move the move to play
         /// @throws @ref invalid argument if the given move has invalid starting or ending squares

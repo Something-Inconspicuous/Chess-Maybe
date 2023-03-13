@@ -14,6 +14,7 @@ const string Game::START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 Game::Game(string fen){
     mTurnToMove = Piece::white;
     mBoard = new Board(fen);
+    mEnPassantFile = -1;
 }
 
 Game::~Game(){
@@ -40,6 +41,33 @@ bool Game::moveIsGoingTo(vector<Move> moves, int file, int rank){
 
 void Game::makeMove(Move move){
     mBoard->makeMove(move);
+
+    if(mEnPassantFile != -1){
+        if(move.rankFrom == (mTurnToMove == Piece::white ? 4 : 3) //the move is from a rank that could en passant
+            && move.fileFrom != move.fileTo //and the move is going to a different file
+            && move.fileTo == mEnPassantFile //and the move is going to the en passant file
+            && mBoard->getPiece(move.fileTo, move.rankTo).getType() == Piece::pawn //and the piece is a pawn
+            && move.rankTo == (mTurnToMove == Piece::white ? 5 : 2) //and it is moveing forward
+        ){
+            //then it is definately an en passant capture
+            delete mBoard->pat(mEnPassantFile, move.rankFrom);
+            mBoard->pat(mEnPassantFile, move.rankFrom) = NULL;
+            mEnPassantFile = -1;
+            return;
+        }
+    }
+    //checks if the move is a double pawn move. If so, update the en passant file
+    if(move.rankFrom == (mTurnToMove == Piece::white ? 1 : 6)){
+        //to instead of from cause the move already happened
+        if(mBoard->getPiece(move.fileTo, move.rankTo).getType() == Piece::pawn){ 
+            if(move.rankTo == (mTurnToMove == Piece::white ? 3 : 4)){
+                mEnPassantFile = move.fileTo;
+            }
+        }
+    } else{
+        mEnPassantFile = -1;
+    }
+    cout << mEnPassantFile << endl;
 }
 
 string Game::boardAsString(){
@@ -177,7 +205,9 @@ std::vector<Move> Game::generateKnightMoves(int file, int rank){
 
 std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
     if(forward != 1 && forward != -1)
-        throw invalid_argument(std::string(__FILE__) + "." + std::to_string(__LINE__) + ": forward cannot be " + (forward + "") + " must be 1 or -1");
+        throw invalid_argument(
+            std::string(__FILE__) + "." + std::to_string(__LINE__) + 
+            ": forward cannot be " + (forward + "") + " must be 1 or -1");
 
     vector<Move> moves;
     if(mBoard->getPiece(file, rank + forward).getColor() == Piece::nocolor){
@@ -210,8 +240,9 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
 
     //checks diagonals
     if(file + 1 <= 7){
-        if(mBoard->getPiece(file + 1, rank + forward).getColor() ==
-        (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
+        if((mBoard->getPiece(file + 1, rank + forward).getColor() ==
+        (mTurnToMove == Piece::white ? Piece::black : Piece::white)) ||
+        (file + 1 == mEnPassantFile && rank == (mTurnToMove == Piece::white ? 4 : 3))){
             Move move;
             move.fileFrom = file;
             move.rankFrom = rank;
@@ -223,8 +254,9 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
     }
 
     if(file - 1 >= 0){
-        if(mBoard->getPiece(file - 1, rank + forward).getColor() ==
-        (mTurnToMove == Piece::white ? Piece::black : Piece::white)){
+        if((mBoard->getPiece(file - 1, rank + forward).getColor() ==
+        (mTurnToMove == Piece::white ? Piece::black : Piece::white)) ||
+        (file - 1 == mEnPassantFile && rank == (mTurnToMove == Piece::white ? 4 : 3))){
             Move move;
             move.fileFrom = file;
             move.rankFrom = rank;

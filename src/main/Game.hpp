@@ -11,6 +11,8 @@ private:
     /// @brief a list (as a vector) that keeps track of what squares the enemy attacks
     std::vector<Move> mAttackingMoves;
 
+    int mEnPassantFile;
+
     /// @brief changes the turn to move to the opposite color
     void cTurn();
 
