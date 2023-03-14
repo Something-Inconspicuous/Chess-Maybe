@@ -109,6 +109,10 @@ public:
     /// @return a string representation of the board
     std::string boardAsString(std::vector<Move> moves);
 
+    /// @brief gives the color whose turn it is to move
+    /// @return the turn to move
+    Piece::color getTurnToMove();
+
     /// @brief Changes the turn to move to either the given turn or the other turn if
     /// no turn is given
     /// @param col the color whose turn to change the turn to move to to

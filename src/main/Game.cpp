@@ -139,6 +139,10 @@ string Game::boardAsString(std::vector<Move> moves){
     return mBoard->toString(moves);
 }
 
+Piece::color Game::getTurnToMove(){
+    return mTurnToMove;
+}
+
 std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
 
     if(fileFrom < 0 || fileFrom > 7)

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "algorithm"
+#include "thread"
 #include "../libs/LettersManip.hpp"
 #include "Game.hpp"
 
@@ -9,62 +10,59 @@ inline void clrscr() {
     //for(int i = 0; i < 50; i++){
     //    std::cout<<"\n";
     //}
-    //std::cout<<std::endl;
+    //std::cout<<std::"\n";
     std::cout << "\033[H\033[2J" << std::endl;
+
 }
 
 Move getMove(Game& game){
     getMove:
     clrscr();
     cout << game.boardAsString();
+    cout << (game.getTurnToMove() == Piece::white ? "White" : "Black") << " to move." << "\n";
 
     string inp;
-    char c;
     Move move;
 
-    cout << "start file: ";
+    cout << "Starting square: ";
     cin >> inp;
+    if(inp == "STOP"){
+        exit(EXIT_SUCCESS);
+    }
 
-    try{
-        move.fileFrom = std::stoi(inp);
-    } catch(invalid_argument){
-        c = inp[0];
+    move.fileFrom = game.charToFile(inp[0]);
+    move.rankFrom = game.charToRank(inp[1]);
 
-        move.fileFrom = Game::charToFile(c);
+    if(move.fileFrom == -1 || move.rankFrom == -1){
+        cout << "invalid square" << "\n";
+        std::this_thread::sleep_for(1000ms);
+        goto getMove;
     }
     
-
-    cout << "start rank: ";
-    cin >> inp;
-
-    c = inp[0];
-    move.rankFrom = Game::charToRank(c);
     
     //show the legal moves
     vector<Move> moves = game.getLegalMovesFor(move.fileFrom, move.rankFrom);
     if(moves.size() == 0){
-        cout << "no legal moves" <<endl;
+        cout << "no legal moves" << "\n";
+        std::this_thread::sleep_for(1000ms);
         goto getMove;
     }
     clrscr();
-    cout<< game.boardAsString(moves) <<endl;
+    cout<< game.boardAsString(moves) << "\n";
 
-    cout << "end file: ";
+    cout << "Ending square: ";
     cin >> inp;
-
-    try{
-        move.fileTo = std::stoi(inp);
-    } catch(invalid_argument){
-        c = inp[0];
-        move.fileTo = Game::charToFile(c);
-        //cout<<move.fileTo<<endl;
+    if(inp == "STOP"){
+        exit(EXIT_SUCCESS);
     }
 
-    cout << "end rank: ";
-    cin >> inp;
-    
-    c = inp[0];
-    move.rankTo = Game::charToRank(c);
+    move.fileTo = game.charToFile(inp[0]);
+    move.rankTo = game.charToRank(inp[1]);
+
+    if(move.fileTo == -1 || move.rankTo == -1){
+        cout << "invalid square" << "\n";
+        goto getMove;
+    }
 
     return move;
 }
@@ -72,14 +70,14 @@ Move getMove(Game& game){
 bool playerTurn(Game& game, const Piece::color playerColor){
     game.changeTurn(playerColor);
 
-    cout << (playerColor == Piece::white ? "white" : "black") << " to move" << endl;
+    cout << (playerColor == Piece::white ? "white" : "black") << " to move" << "\n";
 
     vector<Move> allLegalMoves = game.getAllLegalMoves();
     if(allLegalMoves.size() == 0){
         if(game.playerInCheck(playerColor))
-            cout << "Checkmate!" << endl;
+            cout << "Checkmate!" << "\n";
         else
-            cout << "Stalemate!" << endl;
+            cout << "Stalemate!" << "\n";
         return true;
     }
 
@@ -90,7 +88,7 @@ bool playerTurn(Game& game, const Piece::color playerColor){
     move = getMove(game);
     moveIsValid = std::find(allLegalMoves.begin(), allLegalMoves.end(), move) != allLegalMoves.end();
     if(!moveIsValid){
-        cout << "illigal move" << endl;
+        cout << "illigal move" << "\n";
         goto getAMove;
     }
 
@@ -98,7 +96,7 @@ bool playerTurn(Game& game, const Piece::color playerColor){
     //make the move
     game.makeMove(move);
     
-    cout << game.boardAsString() << endl;
+    cout << game.boardAsString() << "\n";
     return false;
 }
 
@@ -109,7 +107,7 @@ int main(){
     gameStart:
     //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
     Game game(Game::START_FEN);
-    cout << game.boardAsString() << endl;
+    cout << game.boardAsString() << "\n";
 
     //vector<Move> ms = game.getLegalMovesFor(7, 4);
     //cout << game.boardAsString(ms);
@@ -143,7 +141,7 @@ int main(){
     } else if(inp[0] == 'n'){
         return 0;
     } else{
-        cout << "invalid input" << endl;
+        cout << "invalid input" << "\n";
         goto playAgain;
     }
 } 
