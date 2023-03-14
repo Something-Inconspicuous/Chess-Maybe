@@ -2,7 +2,6 @@
 #include "../libs/LettersManip.hpp"
 #include "stdexcept"
 #include "algorithm"
-#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
@@ -15,6 +14,10 @@ Game::Game(string fen){
     mTurnToMove = Piece::white;
     mBoard = new Board(fen);
     mEnPassantFile = -1;
+    wCastSh = true;
+    wCastLo = true;
+    bCastSh = true;
+    bCastLo = true;
 }
 
 Game::~Game(){
@@ -67,7 +70,65 @@ void Game::makeMove(Move move){
     } else{
         mEnPassantFile = -1;
     }
-    cout << mEnPassantFile << endl;
+    //cout << mEnPassantFile << endl;
+
+    //check if the piece moved from the king's home square
+    if(move.fileFrom == 4 && move.rankFrom == (mTurnToMove == Piece::white ? 0 : 7)
+        && mBoard->getPiece(move.fileTo, move.rankTo).getType() == Piece::king //and is a king
+    ){
+        if(move.fileTo == 6){
+            //short castle
+            int r = mTurnToMove == Piece::white ? 0 : 7;
+            Move c;
+            c.fileFrom = 7;
+            c.fileTo = 5;
+            c.rankFrom = r;
+            c.rankTo = r;
+            mBoard->makeMove(c);
+            return;
+        }
+        if(move.fileTo == 2){
+            //long castle
+            int r = mTurnToMove == Piece::white ? 0 : 7;
+            Move c;
+            c.fileFrom = 0;
+            c.fileTo = 3;
+            c.rankFrom = r;
+            c.rankTo = r;
+            mBoard->makeMove(c);
+            return;
+        }
+        //the move is not a castle here
+        if(mTurnToMove == Piece::white){
+            wCastSh = false;
+            wCastLo = false;
+        } else{
+            bCastSh = false;
+            bCastLo = false;
+        }
+    }
+
+    //checks if the rook is moved or taken
+    if(move.fileFrom == 0 && move.rankFrom == (mTurnToMove == Piece::white ? 0 : 7)
+        || move.fileTo == 0 && move.rankTo == (mTurnToMove == Piece::white ? 0 : 7)
+    ){
+        if(mTurnToMove == Piece::white){
+            wCastLo = false;
+        } else{
+            bCastLo = false;
+        }
+        return;
+    }
+    if(move.fileFrom == 7 && move.rankFrom == (mTurnToMove == Piece::white ? 0 : 7)
+        || move.fileTo == 7 && move.rankTo == (mTurnToMove == Piece::white ? 0 : 7)
+    ){
+        if(mTurnToMove == Piece::white){
+            wCastSh = false;
+        } else{
+            bCastSh = false;
+        }
+        return;
+    }
 }
 
 string Game::boardAsString(){
@@ -128,6 +189,47 @@ std::vector<Move> Game::getMovesFor(int fileFrom, int rankFrom){
                         move.rankTo = rank;
 
                         moves.push_back(move);
+                    }
+                }
+
+                int back = mTurnToMove == Piece::white ? 0 : 7;
+                const bool& castSh = mTurnToMove == Piece::white ? wCastSh : bCastSh;
+                const bool& castLo = mTurnToMove == Piece::white ? wCastLo : bCastLo;
+                if(fileFrom == 4 && rankFrom == back){
+                    //short castle
+                    if(castSh){
+                        if(mBoard->getPiece(5, back).getType() == Piece::notype //cannot castle if a piece is in the way
+                            && mBoard->getPiece(6, back).getType() == Piece::notype //same thing
+                            && !squareIsAttacked(5, back) //cannot castle through check
+                            && !playerInCheck(mTurnToMove) // cannot castle out of check
+                        ){
+                            Move c;
+                            c.fileFrom = fileFrom;
+                            c.rankFrom = rankFrom;
+                            c.fileTo = 6;
+                            c.rankTo = back;
+
+                            moves.push_back(c);
+                        }
+                    }
+
+                    //long castle
+                    if(castLo){
+                        if(mBoard->getPiece(3, back).getType() == Piece::notype //cannot castle if a piece is in the way
+                            && mBoard->getPiece(2, back).getType() == Piece::notype //same thing
+                            && mBoard->getPiece(1, back).getType() == Piece::notype //same thing
+                            && !squareIsAttacked(3, back) //cannot castle through check
+                            && !squareIsAttacked(2, back) //cannot castle though check
+                            && !playerInCheck(mTurnToMove) // cannot castle out of check
+                        ){
+                            Move c;
+                            c.fileFrom = fileFrom;
+                            c.rankFrom = rankFrom;
+                            c.fileTo = 2;
+                            c.rankTo = back;
+
+                            moves.push_back(c);
+                        }
                     }
                 }
             }
@@ -324,6 +426,9 @@ int Game::charToFile(char file){
 }
 
 int Game::charToRank(char rank){
+    if(rank < '1' || rank > '8'){
+        return -1;
+    }
     return (int)(rank - '0') - 1;
 }
 

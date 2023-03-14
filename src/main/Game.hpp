@@ -13,6 +13,15 @@ private:
 
     int mEnPassantFile;
 
+    /// @brief white can castle short
+    bool wCastSh;
+    /// @brief white can castle long
+    bool wCastLo;
+    /// @brief black can castle short
+    bool bCastSh;
+    /// @brief black can castle long
+    bool bCastLo;
+
     /// @brief changes the turn to move to the opposite color
     void cTurn();
 
@@ -113,7 +122,7 @@ public:
     /// @return true of the given player's king is attacked, false otherwise
     bool inline playerInCheck(const Piece::color player){
         if(player == Piece::white)  return squareIsAttacked(mBoard->wKingFile, mBoard->wKingRank);
-        else                        return squareIsAttacked(mBoard->bKingFile, mBoard->wKingRank);
+        else                        return squareIsAttacked(mBoard->bKingFile, mBoard->bKingRank);
     }
 
     /// @brief gets the possible moves for a square based on how that piece can move

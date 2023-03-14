@@ -26,10 +26,14 @@ const map<Piece::type, char> Piece::pieceToChar = {
         };
 
 Piece::type Piece::getType(){
+    if(this == NULL)
+        return notype;
     return mType;
 }
 
 Piece::color Piece::getColor(){
+    if(this == NULL)
+        return nocolor;
     return mColor;
 }
 

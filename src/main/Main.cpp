@@ -10,11 +10,14 @@ inline void clrscr() {
     //    std::cout<<"\n";
     //}
     //std::cout<<std::endl;
-    //std::cout << "\033[H\033[2J" << std::endl;
+    std::cout << "\033[H\033[2J" << std::endl;
 }
 
 Move getMove(Game& game){
     getMove:
+    clrscr();
+    cout << game.boardAsString();
+
     string inp;
     char c;
     Move move;
@@ -43,6 +46,7 @@ Move getMove(Game& game){
         cout << "no legal moves" <<endl;
         goto getMove;
     }
+    clrscr();
     cout<< game.boardAsString(moves) <<endl;
 
     cout << "end file: ";
@@ -80,12 +84,16 @@ bool playerTurn(Game& game, const Piece::color playerColor){
     }
 
     //get a move from the user
+    getAMove:
     Move move;
-    {bool moveIsValid = false;
-    do{
-        move = getMove(game);
-        moveIsValid = std::find(allLegalMoves.begin(), allLegalMoves.end(), move) != allLegalMoves.end();
-    }while(!moveIsValid);}
+    bool moveIsValid = false;
+    move = getMove(game);
+    moveIsValid = std::find(allLegalMoves.begin(), allLegalMoves.end(), move) != allLegalMoves.end();
+    if(!moveIsValid){
+        cout << "illigal move" << endl;
+        goto getAMove;
+    }
+
 
     //make the move
     game.makeMove(move);
@@ -96,7 +104,7 @@ bool playerTurn(Game& game, const Piece::color playerColor){
 
 // Hi people -Your biggest fan, Cow
 int main(){
-    clrscr();
+    //clrscr();
     //all of this is testing right now
     gameStart:
     //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
