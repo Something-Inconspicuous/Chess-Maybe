@@ -5,4 +5,6 @@ struct Move{
     int rankTo;
 
     bool operator==(const Move cMove);
+
+    void operator=(const Move nMove);
 };

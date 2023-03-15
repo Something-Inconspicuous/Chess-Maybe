@@ -473,7 +473,13 @@ std::string Game::movesToString(std::vector<Move> moves){
 }
 
 Board& Game::getBoard(){
+    if(mBoard == NULL)
+        throw std::exception();
     return *mBoard;
+}
+
+Board*& Game::getBoardP(){
+    return mBoard;
 }
 
 bool Game::squareIsAttacked(int file, int rank){

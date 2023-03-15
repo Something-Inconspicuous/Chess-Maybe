@@ -185,5 +185,9 @@ public:
     /// @return the board
     Board& getBoard();
 
+    /// @brief teturns a pointer to the board
+    /// @return the voard's memory address
+    Board*& getBoardP();
+
     void test();
 };
