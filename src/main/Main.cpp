@@ -105,6 +105,16 @@ int main(){
     //clrscr();
     //all of this is testing right now
     gameStart:
+
+    /*
+        Dear Developer,
+        I am writing this note to you today to announce my love for you. 
+        Please excuse this long comment in the middle of your code base, but I think this is exremely  romantic.
+        To be more specific, I wanted to go on a coffe date with you at starbucks.
+        I've been eyeing this code base since you've started (clearly) and now I am being brave enough to show how much I love your thick codebase.
+        The indents in this codebase add such a nice curve to your code and looking at the overview on the side of vs code is so attractive.
+        From, your biggest fan, @x86Cow
+    */
     //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
     Game game(Game::START_FEN);
     cout << game.boardAsString() << "\n";
