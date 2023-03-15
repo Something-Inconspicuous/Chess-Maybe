@@ -115,6 +115,10 @@ int main(){
         The indents in this codebase add such a nice curve to your code and looking at the overview on the side of vs code is so attractive.
         From, your biggest fan, @x86Cow
     */
+    /*
+     * what the f***
+     */
+
     //Game game("rnbqkbnr/pppppppp/7r/7K/8/8/PPPPPPPP/RNBQ1BNR");
     Game game(Game::START_FEN);
     cout << game.boardAsString() << "\n";
