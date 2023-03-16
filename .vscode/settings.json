@@ -50,6 +50,11 @@
         "ratio": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "chrono": "cpp",
+        "optional": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp",
+        "cinttypes": "cpp"
     }
 }

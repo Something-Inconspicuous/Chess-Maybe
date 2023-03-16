@@ -2,6 +2,7 @@
 #include "LettersManip.hpp"
 #include "stdexcept"
 #include "cstring"
+//#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)

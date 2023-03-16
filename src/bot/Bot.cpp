@@ -1,6 +1,8 @@
 #include "Bot.hpp"
 #include "math.h"
-#include "iostream"
+#include "algorithm"
+#include "climits"
+//#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
@@ -20,7 +22,7 @@ int Bot::mSearch(int depth, int alpha, int beta, bool isw){
     //std::cout << "copied board" << "\n";
 
     if(depth <= 0){
-        std::cout << "depth reached" << std::endl;
+        //std::cout << "depth reached" << std::endl;
         return evali(mGame->getBoard());
     }
     
@@ -43,14 +45,14 @@ int Bot::mSearch(int depth, int alpha, int beta, bool isw){
         for(Move move : moves){
             mGame->makeMove(move); //make the move
             mGame->changeTurn();
-            eval = __max(eval, mSearch(depth - 1, alpha, beta, false)); //search from there
+            eval = std::max(eval, mSearch(depth - 1, alpha, beta, false)); //search from there
 
             //unmake the move
             delete mGame->getBoardP();
             mGame->getBoard() = Board(*lastPos);
 
             //alpha-beta pruning stuff
-            alpha = __max(alpha, eval);
+            alpha = std::max(alpha, eval);
             if(eval >= beta){
                 break;
             }
@@ -65,14 +67,14 @@ int Bot::mSearch(int depth, int alpha, int beta, bool isw){
 
             int eEval = mSearch(depth - 1, alpha, beta, false);
 
-            eval = __min(eval, eEval); //search from there
+            eval = std::min(eval, eEval); //search from there
 
             //unmake the move
             delete mGame->getBoardP();
             mGame->getBoard() = Board(*lastPos);
 
             //alpha-beta pruning stuff
-            beta = __min(beta, eval);
+            beta = std::min(beta, eval);
             if(eval <= alpha){
                 break;
             }
@@ -112,14 +114,19 @@ int Bot::matDif(Board brd){
     return matScore;
 }
 
-Bot::Bot(Game& game)
-{
-    mGame = &game;
+Bot::Bot(Game& game){
+    mGame = new Game(game);
     mMoveToMake = Move();
 }
 
 Bot::~Bot(){
-       
+    storeBoard = Board(); // replaces the board with an empty board
+
+    //std::cout << "deleting bot's game: " << mGame << "\n";
+    delete mGame;
+    //std::cout << "bot's game deleted" << "\n";
+    mGame = NULL;
+    //std::cout << "bot's game nullified" << "\n";
 }
 
 void Bot::makeStoredMove(){
@@ -132,53 +139,56 @@ void Bot::store(){
 
 int Bot::search(int depth){
     Board lastPos(mGame->getBoard()); //precaution
-    std::cout << __FILE__ << __LINE__ << "\n";
+    //std::cout << mGame->boardAsString() << "\n";
     bool botAsWhite = mGame->getTurnToMove() == Piece::white;
 
     std::vector<Move> moves = mGame->getAllLegalMoves();
+
+    if(moves.size() == 0){
+        return -INT_MAX;
+    }
     Move wMoveToMake = moves.at(0);
     Move bMoveToMake = moves.at(0);
     int wBestEval = -INT_MAX;
     int bBestEval = INT_MAX;
     int curEval;
-std::cout << __FILE__ << __LINE__ << "\n";
+
     for(Move move : moves){
-        std::cout << __FILE__ << __LINE__ << "\n";
+
         mGame->makeMove(move);
-        std::cout << __FILE__ << __LINE__ << "\n";
+
         curEval = mSearch(depth - 1, -INT_MAX, INT_MAX, mGame->getTurnToMove() == Piece::white);
-        std::cout << mGame->getBoardP() << " " << &lastPos << "\n";
+
         delete (mGame->getBoardP());
         mGame->getBoardP() = NULL;
-        std::cout << mGame->getBoardP() << " " << &lastPos << "\n";
+
         Board b = Board(lastPos);
-        std::cout << __FILE__ << __LINE__ << "\n";
+
         //mGame->getBoard() = b;
         mGame->getBoardP() = new Board(b);
-        std::cout << __FILE__ << __LINE__ << "\n" << curEval << "\n";
+        
         if(curEval > wBestEval){
             wBestEval = curEval;
+            wMoveToMake = move;
         }
         if(curEval < bBestEval){
             bBestEval = curEval;
+            bMoveToMake = move;
         }
-        std::cout << __FILE__ << __LINE__ << "\n";
+        
     }
-    std::cout << "done searchinig: found best evals of " << wBestEval << " and " << bBestEval << "\n";
-    
-    //reset all moves done
-    std::cout << &(mGame->getBoard()) << "\n";
+    //std::cout << "done searchinig: found best evals of " << wBestEval << " and " << bBestEval << "\n";
 
     if(botAsWhite){
         mMoveToMake = wMoveToMake;
-        std::cout << "return " << wBestEval << "\n";
+        //std::cout << "return " << wBestEval << "\n";
         return wBestEval;
     } else{
         mMoveToMake = bMoveToMake;
-        std::cout << "return " << bBestEval << "\n";
+        //std::cout << "return " << bBestEval << "\n";
         return bBestEval;
     }
-    std::cout << "how did we get here" << std::endl; 
+    //std::cout << "how did we get here" << std::endl; 
     return 0;
 }
 

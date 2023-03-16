@@ -2,6 +2,7 @@
 #include "../libs/LettersManip.hpp"
 #include "stdexcept"
 #include "algorithm"
+//#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
@@ -20,8 +21,27 @@ Game::Game(string fen){
     bCastLo = true;
 }
 
+Game::Game(const Game &game){
+    delete this->mBoard;
+    if(game.mBoard == NULL){
+        mBoard = NULL;
+    } else{
+        this->mBoard = new Board(*game.mBoard);
+    }
+    this->mEnPassantFile = game.mEnPassantFile;
+    this->wCastSh = game.wCastSh;
+    this->wCastLo = game.wCastLo;
+    this->bCastSh = game.bCastSh;
+    this->bCastLo = game.bCastLo;
+    this->mTurnToMove = game.mTurnToMove;
+}
+
 Game::~Game(){
+    //std::cout << "deleting board: " << mBoard << "\n";
     delete mBoard;
+    //std::cout << "deleted board" << "\n";
+    mBoard = NULL;
+    //std::cout << "nullified board" << "\n";
 }
 
 void Game::cTurn(){

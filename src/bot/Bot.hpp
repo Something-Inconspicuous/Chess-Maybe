@@ -6,7 +6,7 @@ class Bot{
     private:
         static const std::map<Piece::type, int> matVal;
 
-        std::vector<std::thread> mThreads;
+        //std::vector<std::thread> mThreads;
 
         Game* mGame;
 
