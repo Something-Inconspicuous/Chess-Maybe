@@ -20,13 +20,14 @@ class Bot{
         /// @param beta beta for alpha-beta pruning
         /// @return an evaluation
         /// @see https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
-        int mSearch(int depth, int alpha, int beta, bool isw);
+        int mSearch(int depth, int alpha, int beta);
 
         /// @brief Evaluates a given board. negative is good for black while 
         /// positive is good for white
         /// @param brd the board to evaluate the position of
+        /// @param perspective the perspective to evaluate from
         /// @return the evaluation as an int
-        static int evali(Board brd);
+        static int evali(Board brd, const int perspective);
 
         /// @brief Counts the difference in material. White's is positive, blacks is negative.
         /// An equal board will give a result of 0;

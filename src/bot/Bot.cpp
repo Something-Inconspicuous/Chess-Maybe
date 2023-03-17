@@ -17,81 +17,57 @@ const std::map<Piece::type, int> Bot::matVal = {
     {Piece::king, 0} //king will contribute no matieral value as both players will have one
 };
 
-int Bot::mSearch(int depth, int alpha, int beta, bool isw){
-    
-    //std::cout << "copied board" << "\n";
-
+int Bot::mSearch(int depth, int alpha, int beta){
     if(depth <= 0){
-        //std::cout << "depth reached" << std::endl;
-        return evali(mGame->getBoard());
+        int eval = evali(mGame->getBoard(), mGame->getTurnToMove() == Piece::white ? 1 : -1);
+        return eval;
     }
-    
-    Board* lastPos = new Board(mGame->getBoard());
+
+
     std::vector<Move> moves = mGame->getAllLegalMoves();
+    //std::cout << moves.size() << "\n";
+    //std::cout << mGame->getTurnToMove() << "\n";
 
     if(moves.size() == 0){
-        delete lastPos;
-        if(mGame->playerInCheck(Piece::white)){
-            return -INT_MAX; //mate for black
-        }
-        if(mGame->playerInCheck(Piece::black)){
-            return INT_MAX; //mate for white
+        if(mGame->playerInCheck(mGame->getTurnToMove())){
+            return -INT_MAX; //checkmate
         }
         return 0; //stalemate
     } 
-    int eval;
-    if(isw){
-        eval = -INT_MAX;
-        for(Move move : moves){
-            mGame->makeMove(move); //make the move
-            mGame->changeTurn();
-            eval = std::max(eval, mSearch(depth - 1, alpha, beta, false)); //search from there
+    
+    Board* lastPos = new Board(mGame->getBoard());
+    
+    for(Move move : moves){
+        mGame->makeMove(move);
+        mGame->changeTurn();
 
-            //unmake the move
-            delete mGame->getBoardP();
-            mGame->getBoard() = Board(*lastPos);
+        int eval = -mSearch(depth - 1, -beta, -alpha);
 
-            //alpha-beta pruning stuff
-            alpha = std::max(alpha, eval);
-            if(eval >= beta){
-                break;
-            }
+        //unmake move
+        delete mGame->getBoardP();
+        mGame->getBoardP() = new Board(*lastPos);
+        mGame->changeTurn();
+
+        if(eval >= beta){
+            delete lastPos;
+            return beta;
         }
-        delete lastPos;
-        return eval;
-    } else{
-        eval = INT_MAX;
-        for(Move move : moves){
-            mGame->makeMove(move); //make the move
-            mGame->changeTurn();
-
-            int eEval = mSearch(depth - 1, alpha, beta, false);
-
-            eval = std::min(eval, eEval); //search from there
-
-            //unmake the move
-            delete mGame->getBoardP();
-            mGame->getBoard() = Board(*lastPos);
-
-            //alpha-beta pruning stuff
-            beta = std::min(beta, eval);
-            if(eval <= alpha){
-                break;
-            }
-        }
-        delete lastPos;
-        return eval;
+        alpha = std::max(eval, alpha);
     }
+    delete lastPos;
+    return alpha;
 }
 
-int Bot::evali(Board brd)
+
+
+int Bot::evali(Board brd, const int perspective)
 {
     int eval = 0;
 
     //TODO: add evaluations
     eval += matDif(brd);
 
-    return eval;
+    return perspective * eval;
 }
 
 int Bot::matDif(Board brd){
@@ -147,17 +123,27 @@ int Bot::search(int depth){
     if(moves.size() == 0){
         return -INT_MAX;
     }
-    Move wMoveToMake = moves.at(0);
-    Move bMoveToMake = moves.at(0);
-    int wBestEval = -INT_MAX;
-    int bBestEval = INT_MAX;
+    Move moveToMake = moves.at(0);
+    //Move bMoveToMake = moves.at(0);
+    int alpha = -INT_MAX;
+    int beta = INT_MAX;
     int curEval;
 
     for(Move move : moves){
+        mGame->changeTurn(botAsWhite ? Piece::white : Piece::black);
+
+        std::string str = mGame->moveToString(move);
 
         mGame->makeMove(move);
+        mGame->changeTurn();
+        //std::cout << mGame->boardAsString() << "\n";
+        //std::cout << mGame->getAllLegalMoves().size() << "\n";
 
-        curEval = mSearch(depth - 1, -INT_MAX, INT_MAX, mGame->getTurnToMove() == Piece::white);
+        //curEval = -mSearch(depth - 1, -INT_MAX, INT_MAX); //accurate results for every move; slower
+        curEval = -mSearch(depth - 1, -beta, -alpha); //inaccurate results for moves with worse evals that are searched after a move with better eval; much, much faster
+        //NOTE - this does not change what move is found, as the bot picks the first one with the best eval it has found
+        //so the second option if identical when looking for just the best move and not any other lines, and is much faster.+
+        //std::cout << "found that move " << str << " has eval " << curEval <<"\n";
 
         delete (mGame->getBoardP());
         mGame->getBoardP() = NULL;
@@ -166,33 +152,34 @@ int Bot::search(int depth){
 
         //mGame->getBoard() = b;
         mGame->getBoardP() = new Board(b);
+        mGame->changeTurn();
         
-        if(curEval > wBestEval){
-            wBestEval = curEval;
-            wMoveToMake = move;
+        if(curEval > alpha){
+            alpha = curEval;
+            moveToMake = move;
         }
-        if(curEval < bBestEval){
-            bBestEval = curEval;
-            bMoveToMake = move;
+        //if(curEval < beta){
+        //    beta = curEval;
+            //bMoveToMake = move;
+        //}
+
+        if(alpha == INT_MAX){
+            //mate has been found!
+            break;
         }
         
     }
     //std::cout << "done searchinig: found best evals of " << wBestEval << " and " << bBestEval << "\n";
 
     if(botAsWhite){
-        mMoveToMake = wMoveToMake;
+        mMoveToMake = moveToMake;
         //std::cout << "return " << wBestEval << "\n";
-        return wBestEval;
+        return alpha;
     } else{
-        mMoveToMake = bMoveToMake;
+        mMoveToMake = moveToMake;
         //std::cout << "return " << bBestEval << "\n";
-        return bBestEval;
+        return -alpha;
     }
     //std::cout << "how did we get here" << std::endl; 
     return 0;
 }
-
-float Bot::evalf(Board board){
-    return (float)(evali(board) * 0.01);
-}
-
