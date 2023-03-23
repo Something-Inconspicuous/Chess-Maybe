@@ -4,7 +4,52 @@
 
 class Bot{
     private:
+        static const int outNumWeight;
+        static const int mobilityWeight;
+
         static const std::map<Piece::type, int> matVal;
+
+        /// @brief the positional score for every square for white pawns
+        static const int wPawnPosVal[8][8];
+
+        /// @brief the positional score for every square for black pawns
+        static const int bPawnPosVal[8][8];
+
+        /// @brief the positional score for every square for white knights
+        static const int wKnightPosVal[8][8];
+
+        /// @brief the positional score for every square for black knights
+        static const int bKnightPosVal[8][8];
+
+        /// @brief the positional score for every square for white bishops
+        static const int wBishopPosVal[8][8];
+
+        /// @brief the positional score for every square for black bishops
+        static const int bBishopPosVal[8][8]; 
+
+        /// @brief the positional score for every square for white rooks
+        static const int wRookPosVal[8][8];
+
+        /// @brief the positional score for every square for black bishops
+        static const int bRookPosVal[8][8];
+
+        /// @brief the positional score for every square for white queens
+        static const int wQueenPosVal[8][8];
+
+        /// @brief the positional score for every square for black queens
+        static const int bQueenPosVal[8][8];
+
+        /// @brief the positional score for every square for the white king earlier in the game
+        static const int wKingBegPosVal[8][8];
+
+        /// @brief the positional score for every square for the black king earlier in the game
+        static const int bKingBegPosVal[8][8];
+
+        /// @brief the positional score for every square for the white king later in the game
+        static const int wKingEndPosVal[8][8];
+
+        /// @brief the positional score for every square for the black king later in the game
+        static const int bKingEndPosVal[8][8];
 
         //std::vector<std::thread> mThreads;
 
@@ -27,13 +72,19 @@ class Bot{
         /// @param brd the board to evaluate the position of
         /// @param perspective the perspective to evaluate from
         /// @return the evaluation as an int
-        static int evali(Board brd, const int perspective);
+        static int evali(Game& game, const int perspective);
 
-        /// @brief Counts the difference in material. White's is positive, blacks is negative.
-        /// An equal board will give a result of 0;
+        /// @brief Counts the difference in material. White's is positive, black's is negative.
+        /// An equal board will give a result of 0.
         /// @param brd the board to evaluate
         /// @return an int evaluation of the board's matierial difference
         static int matDif(Board brd);
+
+        /// @brief Evaluates the difference in position. White's is positive, black's is negative.
+        /// An equal board will give a result of 0.
+        /// @param brd the board to evaluate
+        /// @return an int evaluation of the board's positional difference
+        static int posDif(Board brd);
     public:
         /// @brief creates the bot with that will play the given game
         /// @param game the game for the bot to play in

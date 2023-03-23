@@ -7,19 +7,182 @@
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
 
+const int Bot::outNumWeight = 5;
+const int Bot::mobilityWeight = 10;
+
 const std::map<Piece::type, int> Bot::matVal = {
     {Piece::notype, 0},
     {Piece::pawn, 100},
-    {Piece::knight, 300},
-    {Piece::bishop, 300},
+    {Piece::knight, 320},
+    {Piece::bishop, 330},
     {Piece::rook, 500},
     {Piece::queen, 900},
     {Piece::king, 0} //king will contribute no matieral value as both players will have one
 };
 
+//SECTION - positional tables
+
+//NOTE - the positional tables look reversed by rank because white's back is at 0, while the table's bottom is at 7
+
+const int Bot::wPawnPosVal[8][8] = {
+     0,  0,  0,  0,  0,  0,  0,  0, //rank 0
+     5, 10, 10,-20,-20, 10, 10,  5,
+     5, -5,-10,  0,  0,-10, -5,  5,
+     0,  0,  0, 20, 20,  0,  0,  0,
+     5,  5, 10, 25, 25, 10,  5,  5,
+    10, 10, 20, 30, 30, 20, 10, 10,
+    50, 50, 50, 50, 50, 50, 50, 50,
+     0,  0,  0,  0,  0,  0,  0,  0  //rank 7
+};
+
+const int Bot::bPawnPosVal[8][8] = {
+     0,  0,  0,  0,  0,  0,  0,  0,
+    50, 50, 50, 50, 50, 50, 50, 50,
+    10, 10, 20, 30, 30, 20, 10, 10,
+     5,  5, 10, 25, 25, 10,  5,  5,
+     0,  0,  0, 20, 20,  0,  0,  0,
+     5, -5,-10,  0,  0,-10, -5,  5,
+     5, 10, 10,-20,-20, 10, 10,  5,
+     0,  0,  0,  0,  0,  0,  0,  0
+};
+
+const int Bot::wKnightPosVal[8][8] = {
+    -50,-40,-30,-30,-30,-30,-40,-50,
+    -40,-20,  0,  5,  5,  0,-20,-40,
+    -30,  5, 10, 15, 15, 10,  5,-30,
+    -30,  0, 15, 20, 20, 15,  0,-30,
+    -30,  5, 15, 20, 20, 15,  5,-30,
+    -30,  0, 10, 15, 15, 10,  0,-30,
+    -40,-20,  0,  0,  0,  0,-20,-40,
+    -50,-40,-30,-30,-30,-30,-40,-50,
+};
+
+const int Bot::bKnightPosVal[8][8] = {
+    -50,-40,-30,-30,-30,-30,-40,-50,
+    -40,-20,  0,  0,  0,  0,-20,-40,
+    -30,  0, 10, 15, 15, 10,  0,-30,
+    -30,  5, 15, 20, 20, 15,  5,-30,
+    -30,  0, 15, 20, 20, 15,  0,-30,
+    -30,  5, 10, 15, 15, 10,  5,-30,
+    -40,-20,  0,  5,  5,  0,-20,-40,
+    -50,-40,-30,-30,-30,-30,-40,-50,
+};
+
+const int Bot::wBishopPosVal[8][8] = {
+    -20,-10,-10,-10,-10,-10,-10,-20,
+    -10,  5,  0,  0,  0,  0,  5,-10,
+    -10, 10, 10, 10, 10, 10, 10,-10,
+    -10,  0, 10, 10, 10, 10,  0,-10,
+    -10,  5,  5, 10, 10,  5,  5,-10,
+    -10,  0,  5, 10, 10,  5,  0,-10,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -20,-10,-10,-10,-10,-10,-10,-20,
+};
+
+const int Bot::bBishopPosVal[8][8] = {
+    -20,-10,-10,-10,-10,-10,-10,-20,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -10,  0,  5, 10, 10,  5,  0,-10,
+    -10,  5,  5, 10, 10,  5,  5,-10,
+    -10,  0, 10, 10, 10, 10,  0,-10,
+    -10, 10, 10, 10, 10, 10, 10,-10,
+    -10,  5,  0,  0,  0,  0,  5,-10,
+    -20,-10,-10,-10,-10,-10,-10,-20,
+};
+
+const int Bot::wRookPosVal[8][8] = {
+     0,  0,  0,  5,  5,  0,  0,  0
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+     5, 10, 10, 10, 10, 10, 10,  5,
+     0,  0,  0,  0,  0,  0,  0,  0,
+};
+
+const int Bot::bRookPosVal[8][8] = {
+     0,  0,  0,  0,  0,  0,  0,  0,
+     5, 10, 10, 10, 10, 10, 10,  5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+     0,  0,  0,  5,  5,  0,  0,  0
+};
+
+const int Bot::wQueenPosVal[8][8] = {
+   -20,-10,-10, -5, -5,-10,-10,-20, 
+   -10,  0,  5,  0,  0,  0,  0,-10,
+   -10,  5,  5,  5,  5,  5,  0,-10,
+     0,  0,  5,  5,  5,  5,  0, -5,
+    -5,  0,  5,  5,  5,  5,  0, -5,
+   -10,  0,  5,  5,  5,  5,  0,-10,
+   -10,  0,  0,  0,  0,  0,  0,-10,
+   -20,-10,-10, -5, -5,-10,-10,-20,
+};
+
+const int Bot::bQueenPosVal[8][8] = {
+   -20,-10,-10, -5, -5,-10,-10,-20,
+   -10,  0,  0,  0,  0,  0,  0,-10,
+   -10,  0,  5,  5,  5,  5,  0,-10,
+    -5,  0,  5,  5,  5,  5,  0, -5,
+     0,  0,  5,  5,  5,  5,  0, -5,
+   -10,  5,  5,  5,  5,  5,  0,-10,
+   -10,  0,  5,  0,  0,  0,  0,-10,
+   -20,-10,-10, -5, -5,-10,-10,-20
+};
+
+const int Bot::wKingBegPosVal[8][8] = {
+    20, 30, 10,  0,  0, 10, 30, 20,
+    20, 20,  0,  0,  0,  0, 20, 20,
+   -10,-20,-20,-20,-20,-20,-20,-10,
+   -20,-30,-30,-40,-40,-30,-30,-20,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+};
+
+const int Bot::bKingBegPosVal[8][8] = {
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -30,-40,-40,-50,-50,-40,-40,-30,
+   -20,-30,-30,-40,-40,-30,-30,-20,
+   -10,-20,-20,-20,-20,-20,-20,-10,
+    20, 20,  0,  0,  0,  0, 20, 20,
+    20, 30, 10,  0,  0, 10, 30, 20
+};
+
+const int Bot::wKingEndPosVal[8][8] = {
+   -50,-30,-30,-30,-30,-30,-30,-50,
+   -30,-30,  0,  0,  0,  0,-30,-30,
+   -30,-10, 20, 30, 30, 20,-10,-30,
+   -30,-10, 30, 40, 40, 30,-10,-30,
+   -30,-10, 30, 40, 40, 30,-10,-30,
+   -30,-10, 20, 30, 30, 20,-10,-30,
+   -30,-20,-10,  0,  0,-10,-20,-30,
+   -50,-40,-30,-20,-20,-30,-40,-50,
+
+};
+
+const int Bot::bKingEndPosVal[8][8] = {
+   -50,-40,-30,-20,-20,-30,-40,-50,
+   -30,-20,-10,  0,  0,-10,-20,-30,
+   -30,-10, 20, 30, 30, 20,-10,-30,
+   -30,-10, 30, 40, 40, 30,-10,-30,
+   -30,-10, 30, 40, 40, 30,-10,-30,
+   -30,-10, 20, 30, 30, 20,-10,-30,
+   -30,-30,  0,  0,  0,  0,-30,-30,
+   -50,-30,-30,-30,-30,-30,-30,-50
+};
+//!SECTION
+
 int Bot::mSearch(int depth, int alpha, int beta){
     if(depth <= 0){
-        int eval = evali(mGame->getBoard(), mGame->getTurnToMove() == Piece::white ? 1 : -1);
+        int eval = evali(*mGame, mGame->getTurnToMove() == Piece::white ? 1 : -1);
         return eval;
     }
 
@@ -58,20 +221,115 @@ int Bot::mSearch(int depth, int alpha, int beta){
     return alpha;
 }
 
-
-
-int Bot::evali(Board brd, const int perspective)
-{
+int Bot::evali(Game& game, const int perspective){
+    Board& brd = game.getBoard();
     int eval = 0;
+    int endgameWeight = 7800; //starting material
+    int matScore = 0;
+    int onScore = 0; //exists to encourage having more pieces over stronger pieces
+    int posScore = 0;
 
-    //TODO: add evaluations
-    eval += matDif(brd);
+    forRank{
+        forFile{ 
+            Piece piece = brd.getPiece(file, rank);
+            
+            if(piece.getColor() == Piece::nocolor){
+                continue;
+            }
+
+            const bool isWhite = piece.getColor() == Piece::white;
+
+            const int matValOfPiece = matVal.at(piece.getType());
+
+            //record material
+            if(isWhite){
+                matScore += matValOfPiece;
+                onScore += outNumWeight;
+            } else{
+                matScore -= matValOfPiece;
+                onScore -= outNumWeight;
+            }
+
+            endgameWeight -= matValOfPiece;
+
+            //TODO: position
+            
+
+            switch (piece.getType()){
+                case Piece::pawn:
+                    //TODO: check for doubled and linked pawns, adjust score accordingly
+                    if(isWhite){
+                        posScore += wPawnPosVal[file][rank];
+                    } else{
+                        posScore -= bPawnPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::knight:
+                    if(isWhite){
+                        posScore += wKnightPosVal[file][rank];
+                    } else{
+                        posScore -= bKnightPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::bishop:
+                    if(isWhite){
+                        posScore += wBishopPosVal[file][rank];
+                    } else{
+                        posScore -= bBishopPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::rook:
+                    if(isWhite){
+                        posScore += wRookPosVal[file][rank];
+                    } else{
+                        posScore -= bRookPosVal[file][rank];
+                    }
+                    break;
+                    
+                case Piece::queen:
+                    if(isWhite){
+                        posScore += wQueenPosVal[file][rank];
+                    } else{
+                        posScore -= wQueenPosVal[file][rank];
+                    }
+                    break;
+                
+                default:
+                    break;
+            }
+        }
+    }
+
+    //material
+    eval += matScore + onScore;
+
+    //king position
+    const float endgamePercent = endgameWeight * 0.000128205f; //get the endgame-ness as a percent
+    //the .00128... number is 1/7800 btw
+
+    const float beggamePercent = 1 - endgamePercent; //the opposate of the endgame-ness
+
+    posScore += (int)(wKingBegPosVal[brd.wKingFile][brd.bKingRank] * beggamePercent + wKingEndPosVal[brd.wKingFile][brd.wKingRank] * endgamePercent);
+    posScore -= (int)(bKingBegPosVal[brd.bKingFile][brd.bKingRank] * beggamePercent + bKingEndPosVal[brd.bKingFile][brd.bKingRank] * endgamePercent);
+
+    //position
+    eval += posScore;
+
+    //mobility
+    eval += game.getAllLegalMoves().size() * mobilityWeight; //white's mobility
+    game.changeTurn();
+    eval -= game.getAllLegalMoves().size() * mobilityWeight; //black's mobility
+    game.changeTurn();
 
     return perspective * eval;
 }
 
-int Bot::matDif(Board brd){
-    int matScore = 0;
+int Bot::posDif(Board brd){
+    int posScore = 0;
+
     forRank{
         forFile{
             Piece piece = brd.getPiece(file, rank);
@@ -79,18 +337,60 @@ int Bot::matDif(Board brd){
                 continue;
             }
 
-            if(piece.getColor() == Piece::white){
-                matScore += matVal.at(piece.getType());
-            } else{
-                matScore -= matVal.at(piece.getType());
+            const bool isWhite = piece.getColor() == Piece::white;
+
+            switch (piece.getType()){
+                case Piece::pawn:
+                    if(isWhite){
+                        posScore += wPawnPosVal[file][rank];
+                    } else{
+                        posScore -= bPawnPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::knight:
+                    if(isWhite){
+                        posScore += wKnightPosVal[file][rank];
+                    } else{
+                        posScore -= bKnightPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::bishop:
+                    if(isWhite){
+                        posScore += wBishopPosVal[file][rank];
+                    } else{
+                        posScore -= bBishopPosVal[file][rank];
+                    }
+                    break;
+
+                case Piece::rook:
+                    if(isWhite){
+                        posScore += wRookPosVal[file][rank];
+                    } else{
+                        posScore -= bRookPosVal[file][rank];
+                    }
+                    break;
+                    
+                case Piece::queen:
+                    if(isWhite){
+                        posScore += wQueenPosVal[file][rank];
+                    } else{
+                        posScore -= wQueenPosVal[file][rank];
+                    }
+                    break;
+                
+                default:
+                    break;
             }
         }
     }
 
-    return matScore;
+    return posScore;
 }
 
-Bot::Bot(Game& game){
+Bot::Bot(Game &game)
+{
     mGame = new Game(game);
     mMoveToMake = Move();
 }
