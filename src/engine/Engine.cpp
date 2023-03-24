@@ -182,7 +182,7 @@ const int Engine::bKingEndPosVal[8][8] = {
 
 int Engine::privates::mSearch(Game game, int depth, int alpha, int beta, const int startingDepth){
     if(depth <= 0){
-        int eval = game.getTurnToMove() == Piece::white ? 1 : -1 * evali(game);
+        int eval = (game.getTurnToMove() == Piece::white ? 1 : -1) * evali(game);
         return eval;
     }
 
