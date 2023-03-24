@@ -1,16 +1,15 @@
-#include "Bot.hpp"
+#include "Engine.hpp"
 #include "math.h"
 #include "algorithm"
 #include "climits"
-//#include "iostream"
 
 #define forRank for(int rank = 0; rank < 8; rank++)
 #define forFile for(int file = 0; file < 8; file++)
 
-const int Bot::outNumWeight = 5;
-const int Bot::mobilityWeight = 10;
+const int Engine::outNumWeight = 5;
+const int Engine::mobilityWeight = 10;
 
-const std::map<Piece::type, int> Bot::matVal = {
+const std::map<Piece::type, int> Engine::matVal = {
     {Piece::notype, 0},
     {Piece::pawn, 100},
     {Piece::knight, 320},
@@ -24,7 +23,7 @@ const std::map<Piece::type, int> Bot::matVal = {
 
 //NOTE - the positional tables look reversed by rank because white's back is at 0, while the table's bottom is at 7
 
-const int Bot::wPawnPosVal[8][8] = {
+const int Engine::wPawnPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0, //rank 0
      5, 10, 10,-20,-20, 10, 10,  5,
      5, -5,-10,  0,  0,-10, -5,  5,
@@ -35,7 +34,7 @@ const int Bot::wPawnPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0  //rank 7
 };
 
-const int Bot::bPawnPosVal[8][8] = {
+const int Engine::bPawnPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0,
     50, 50, 50, 50, 50, 50, 50, 50,
     10, 10, 20, 30, 30, 20, 10, 10,
@@ -46,7 +45,7 @@ const int Bot::bPawnPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0
 };
 
-const int Bot::wKnightPosVal[8][8] = {
+const int Engine::wKnightPosVal[8][8] = {
     -50,-40,-30,-30,-30,-30,-40,-50,
     -40,-20,  0,  5,  5,  0,-20,-40,
     -30,  5, 10, 15, 15, 10,  5,-30,
@@ -57,7 +56,7 @@ const int Bot::wKnightPosVal[8][8] = {
     -50,-40,-30,-30,-30,-30,-40,-50,
 };
 
-const int Bot::bKnightPosVal[8][8] = {
+const int Engine::bKnightPosVal[8][8] = {
     -50,-40,-30,-30,-30,-30,-40,-50,
     -40,-20,  0,  0,  0,  0,-20,-40,
     -30,  0, 10, 15, 15, 10,  0,-30,
@@ -68,7 +67,7 @@ const int Bot::bKnightPosVal[8][8] = {
     -50,-40,-30,-30,-30,-30,-40,-50,
 };
 
-const int Bot::wBishopPosVal[8][8] = {
+const int Engine::wBishopPosVal[8][8] = {
     -20,-10,-10,-10,-10,-10,-10,-20,
     -10,  5,  0,  0,  0,  0,  5,-10,
     -10, 10, 10, 10, 10, 10, 10,-10,
@@ -79,7 +78,7 @@ const int Bot::wBishopPosVal[8][8] = {
     -20,-10,-10,-10,-10,-10,-10,-20,
 };
 
-const int Bot::bBishopPosVal[8][8] = {
+const int Engine::bBishopPosVal[8][8] = {
     -20,-10,-10,-10,-10,-10,-10,-20,
     -10,  0,  0,  0,  0,  0,  0,-10,
     -10,  0,  5, 10, 10,  5,  0,-10,
@@ -90,7 +89,7 @@ const int Bot::bBishopPosVal[8][8] = {
     -20,-10,-10,-10,-10,-10,-10,-20,
 };
 
-const int Bot::wRookPosVal[8][8] = {
+const int Engine::wRookPosVal[8][8] = {
      0,  0,  0,  5,  5,  0,  0,  0
     -5,  0,  0,  0,  0,  0,  0, -5,
     -5,  0,  0,  0,  0,  0,  0, -5,
@@ -101,7 +100,7 @@ const int Bot::wRookPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0,
 };
 
-const int Bot::bRookPosVal[8][8] = {
+const int Engine::bRookPosVal[8][8] = {
      0,  0,  0,  0,  0,  0,  0,  0,
      5, 10, 10, 10, 10, 10, 10,  5,
     -5,  0,  0,  0,  0,  0,  0, -5,
@@ -112,7 +111,7 @@ const int Bot::bRookPosVal[8][8] = {
      0,  0,  0,  5,  5,  0,  0,  0
 };
 
-const int Bot::wQueenPosVal[8][8] = {
+const int Engine::wQueenPosVal[8][8] = {
    -20,-10,-10, -5, -5,-10,-10,-20, 
    -10,  0,  5,  0,  0,  0,  0,-10,
    -10,  5,  5,  5,  5,  5,  0,-10,
@@ -123,7 +122,7 @@ const int Bot::wQueenPosVal[8][8] = {
    -20,-10,-10, -5, -5,-10,-10,-20,
 };
 
-const int Bot::bQueenPosVal[8][8] = {
+const int Engine::bQueenPosVal[8][8] = {
    -20,-10,-10, -5, -5,-10,-10,-20,
    -10,  0,  0,  0,  0,  0,  0,-10,
    -10,  0,  5,  5,  5,  5,  0,-10,
@@ -134,7 +133,7 @@ const int Bot::bQueenPosVal[8][8] = {
    -20,-10,-10, -5, -5,-10,-10,-20
 };
 
-const int Bot::wKingBegPosVal[8][8] = {
+const int Engine::wKingBegPosVal[8][8] = {
     20, 30, 10,  0,  0, 10, 30, 20,
     20, 20,  0,  0,  0,  0, 20, 20,
    -10,-20,-20,-20,-20,-20,-20,-10,
@@ -145,7 +144,7 @@ const int Bot::wKingBegPosVal[8][8] = {
    -30,-40,-40,-50,-50,-40,-40,-30,
 };
 
-const int Bot::bKingBegPosVal[8][8] = {
+const int Engine::bKingBegPosVal[8][8] = {
    -30,-40,-40,-50,-50,-40,-40,-30,
    -30,-40,-40,-50,-50,-40,-40,-30,
    -30,-40,-40,-50,-50,-40,-40,-30,
@@ -156,7 +155,7 @@ const int Bot::bKingBegPosVal[8][8] = {
     20, 30, 10,  0,  0, 10, 30, 20
 };
 
-const int Bot::wKingEndPosVal[8][8] = {
+const int Engine::wKingEndPosVal[8][8] = {
    -50,-30,-30,-30,-30,-30,-30,-50,
    -30,-30,  0,  0,  0,  0,-30,-30,
    -30,-10, 20, 30, 30, 20,-10,-30,
@@ -168,7 +167,7 @@ const int Bot::wKingEndPosVal[8][8] = {
 
 };
 
-const int Bot::bKingEndPosVal[8][8] = {
+const int Engine::bKingEndPosVal[8][8] = {
    -50,-40,-30,-20,-20,-30,-40,-50,
    -30,-20,-10,  0,  0,-10,-20,-30,
    -30,-10, 20, 30, 30, 20,-10,-30,
@@ -180,36 +179,37 @@ const int Bot::bKingEndPosVal[8][8] = {
 };
 //!SECTION
 
-int Bot::mSearch(int depth, int alpha, int beta){
+
+int Engine::privates::mSearch(Game game, int depth, int alpha, int beta, const int startingDepth){
     if(depth <= 0){
-        int eval = evali(*mGame, mGame->getTurnToMove() == Piece::white ? 1 : -1);
+        int eval = game.getTurnToMove() == Piece::white ? 1 : -1 * evali(game);
         return eval;
     }
 
 
-    std::vector<Move> moves = mGame->getAllLegalMoves();
+    std::vector<Move> moves = game.getAllLegalMoves();
     //std::cout << moves.size() << "\n";
-    //std::cout << mGame->getTurnToMove() << "\n";
+    //std::cout << game.getTurnToMove() << "\n";
 
     if(moves.size() == 0){
-        if(mGame->playerInCheck(mGame->getTurnToMove())){
-            return -INT_MAX; //checkmate
+        if(game.playerInCheck(game.getTurnToMove())){
+            return -INT_MAX + (startingDepth - depth); //checkmate
         }
         return 0; //stalemate
     } 
     
-    Board* lastPos = new Board(mGame->getBoard());
+    Board* lastPos = new Board(game.getBoard());
     
     for(Move move : moves){
-        mGame->makeMove(move);
-        mGame->changeTurn();
+        game.makeMove(move);
+        game.changeTurn();
 
-        int eval = -mSearch(depth - 1, -beta, -alpha);
+        int eval = -mSearch(game, depth - 1, -beta, -alpha, startingDepth);
 
         //unmake move
-        delete mGame->getBoardP();
-        mGame->getBoardP() = new Board(*lastPos);
-        mGame->changeTurn();
+        delete game.getBoardP();
+        game.getBoardP() = new Board(*lastPos);
+        game.changeTurn();
 
         if(eval >= beta){
             delete lastPos;
@@ -221,7 +221,7 @@ int Bot::mSearch(int depth, int alpha, int beta){
     return alpha;
 }
 
-int Bot::evali(Game& game, const int perspective){
+int Engine::evali(Game& game){
     Board& brd = game.getBoard();
     int eval = 0;
     int endgameWeight = 7800; //starting material
@@ -307,8 +307,8 @@ int Bot::evali(Game& game, const int perspective){
     eval += matScore + onScore;
 
     //king position
-    const float endgamePercent = endgameWeight * 0.000128205f; //get the endgame-ness as a percent
-    //the .00128... number is 1/7800 btw
+    constexpr long double matFrac = 1.0L/7800.0L; // 1/7800, or 1/the starting material
+    const float endgamePercent = endgameWeight * matFrac; //get the endgame-ness as a percent
 
     const float beggamePercent = 1 - endgamePercent; //the opposate of the endgame-ness
 
@@ -324,101 +324,15 @@ int Bot::evali(Game& game, const int perspective){
     eval -= game.getAllLegalMoves().size() * mobilityWeight; //black's mobility
     game.changeTurn();
 
-    return perspective * eval;
+    return eval;
 }
 
-int Bot::posDif(Board brd){
-    int posScore = 0;
+int Engine::search(Game& game, int depth, Move& moveToStore){
+    Board lastPos(game.getBoard()); //precaution
+    //std::cout << game.boardAsString() << "\n";
+    bool botAsWhite = game.getTurnToMove() == Piece::white;
 
-    forRank{
-        forFile{
-            Piece piece = brd.getPiece(file, rank);
-            if(piece.getColor() == Piece::nocolor){
-                continue;
-            }
-
-            const bool isWhite = piece.getColor() == Piece::white;
-
-            switch (piece.getType()){
-                case Piece::pawn:
-                    if(isWhite){
-                        posScore += wPawnPosVal[file][rank];
-                    } else{
-                        posScore -= bPawnPosVal[file][rank];
-                    }
-                    break;
-
-                case Piece::knight:
-                    if(isWhite){
-                        posScore += wKnightPosVal[file][rank];
-                    } else{
-                        posScore -= bKnightPosVal[file][rank];
-                    }
-                    break;
-
-                case Piece::bishop:
-                    if(isWhite){
-                        posScore += wBishopPosVal[file][rank];
-                    } else{
-                        posScore -= bBishopPosVal[file][rank];
-                    }
-                    break;
-
-                case Piece::rook:
-                    if(isWhite){
-                        posScore += wRookPosVal[file][rank];
-                    } else{
-                        posScore -= bRookPosVal[file][rank];
-                    }
-                    break;
-                    
-                case Piece::queen:
-                    if(isWhite){
-                        posScore += wQueenPosVal[file][rank];
-                    } else{
-                        posScore -= wQueenPosVal[file][rank];
-                    }
-                    break;
-                
-                default:
-                    break;
-            }
-        }
-    }
-
-    return posScore;
-}
-
-Bot::Bot(Game &game)
-{
-    mGame = new Game(game);
-    mMoveToMake = Move();
-}
-
-Bot::~Bot(){
-    storeBoard = Board(); // replaces the board with an empty board
-
-    //std::cout << "deleting bot's game: " << mGame << "\n";
-    delete mGame;
-    //std::cout << "bot's game deleted" << "\n";
-    mGame = NULL;
-    //std::cout << "bot's game nullified" << "\n";
-}
-
-void Bot::makeStoredMove(){
-    mGame->makeMove(mMoveToMake);
-}
-
-void Bot::store(){
-    storeBoard = Board(*mGame->getBoardP());
-}
-
-int Bot::search(int depth){
-    Board lastPos(mGame->getBoard()); //precaution
-    //std::cout << mGame->boardAsString() << "\n";
-    bool botAsWhite = mGame->getTurnToMove() == Piece::white;
-
-    std::vector<Move> moves = mGame->getAllLegalMoves();
+    std::vector<Move> moves = game.getAllLegalMoves();
 
     if(moves.size() == 0){
         return -INT_MAX;
@@ -430,29 +344,29 @@ int Bot::search(int depth){
     int curEval;
 
     for(Move move : moves){
-        mGame->changeTurn(botAsWhite ? Piece::white : Piece::black);
+        game.changeTurn(botAsWhite ? Piece::white : Piece::black);
 
-        std::string str = mGame->moveToString(move);
+        //std::string str = game.moveToString(move);
 
-        mGame->makeMove(move);
-        mGame->changeTurn();
-        //std::cout << mGame->boardAsString() << "\n";
-        //std::cout << mGame->getAllLegalMoves().size() << "\n";
+        game.makeMove(move);
+        game.changeTurn();
+        //std::cout << game.boardAsString() << "\n";
+        //std::cout << game.getAllLegalMoves().size() << "\n";
 
         //curEval = -mSearch(depth - 1, -INT_MAX, INT_MAX); //accurate results for every move; slower
-        curEval = -mSearch(depth - 1, -beta, -alpha); //inaccurate results for moves with worse evals that are searched after a move with better eval; much, much faster
+        curEval = -mSearch(game, depth - 1, -beta, -alpha, depth); //inaccurate results for moves with worse evals that are searched after a move with better eval; much, much faster
         //NOTE - this does not change what move is found, as the bot picks the first one with the best eval it has found
         //so the second option if identical when looking for just the best move and not any other lines, and is much faster.+
         //std::cout << "found that move " << str << " has eval " << curEval <<"\n";
 
-        delete (mGame->getBoardP());
-        mGame->getBoardP() = NULL;
+        delete (game.getBoardP());
+        game.getBoardP() = NULL;
 
         Board b = Board(lastPos);
 
-        //mGame->getBoard() = b;
-        mGame->getBoardP() = new Board(b);
-        mGame->changeTurn();
+        //game.getBoard() = b;
+        game.getBoardP() = new Board(b);
+        game.changeTurn();
         
         if(curEval > alpha){
             alpha = curEval;
@@ -463,8 +377,8 @@ int Bot::search(int depth){
             //bMoveToMake = move;
         //}
 
-        if(alpha == INT_MAX){
-            //mate has been found!
+        if(alpha == INT_MAX - 1){
+            //mate in 1 has been found!
             break;
         }
         
@@ -472,11 +386,11 @@ int Bot::search(int depth){
     //std::cout << "done searchinig: found best evals of " << wBestEval << " and " << bBestEval << "\n";
 
     if(botAsWhite){
-        mMoveToMake = moveToMake;
+        moveToStore = moveToMake;
         //std::cout << "return " << wBestEval << "\n";
         return alpha;
     } else{
-        mMoveToMake = moveToMake;
+        moveToStore = moveToMake;
         //std::cout << "return " << bBestEval << "\n";
         return -alpha;
     }

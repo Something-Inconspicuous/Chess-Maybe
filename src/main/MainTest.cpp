@@ -1,7 +1,9 @@
 #include <iostream>
 #include "algorithm"
-#include "../bot/Bot.hpp"
+#include "../engine/Engine.hpp"
 #include "../libs/LettersManip.hpp"
+
+using namespace Engine::literals;
 
 int main(){
     
@@ -11,16 +13,20 @@ int main(){
     
     //return 0;
 
-    Bot bot = Bot(game);
+    //Bot bot = Bot(game);
 
     
 
     std::cout << "searching all" << "\n";
-    bot.store();
-    int eval = bot.search(4);
+    //bot.store();
+    //int eval = bot.search(4_ply);
+    int eval;
+    Move m;
+    eval = Engine::search(game, 2_ply, m);
     std::cout << "searched" << "\n";
     std::cout << "best move has eval " << eval << "\n";
-    Move m = bot.getStoredMove();
+    //Move m = bot.getStoredMove();
+    
     game.makeMove(m);
     
 

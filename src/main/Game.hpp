@@ -1,3 +1,6 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #include "../../src/libs/Board.hpp"
 
 class Game{
@@ -192,3 +195,4 @@ public:
 
     void test();
 };
+#endif

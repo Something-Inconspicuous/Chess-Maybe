@@ -1,8 +1,11 @@
+#ifndef BOT_HPP
+#define BOT_HPP
+
 #include "vector"
 #include "thread"
 #include "../main/Game.hpp"
 
-class Bot{
+class [[deprecated("Replaced by the Engine namespace")]] Bot{
     private:
         static const int outNumWeight;
         static const int mobilityWeight;
@@ -110,3 +113,4 @@ class Bot{
         /// @return the evaluation in points
         static float evalf(Board board);
 };
+#endif
