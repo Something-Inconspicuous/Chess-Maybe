@@ -7,3 +7,10 @@ bool Move::operator==(Move cMove){
         && cMove.rankFrom == this->rankFrom && cMove.rankTo == this->rankTo
         && cMove.promotion == this->promotion;
 }
+
+void Move::operator=(const Move nMove){
+    this->fileFrom = nMove.fileFrom;
+    this->fileTo = nMove.fileTo;
+    this->rankFrom = nMove.rankFrom;
+    this->rankTo = nMove.rankTo;
+}

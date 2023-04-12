@@ -23,6 +23,8 @@ class Piece{
         /// @brief creates a piece with type @ref notype and color @ref nocolor
         Piece();
 
+        Piece(const Piece& piece);
+
         /// @brief gives the type of the piece
         /// @return the type of the piece
         type getType();

@@ -15,6 +15,11 @@ Piece::Piece(type nType, color nColor){
     mColor = nColor;
 }
 
+Piece::Piece(const Piece& piece){
+    mType = piece.mType;
+    mColor = piece.mColor;
+}
+
 const map<Piece::type, char> Piece::pieceToChar = {
             {Piece::notype, '0'},
             {Piece::pawn, 'p'},

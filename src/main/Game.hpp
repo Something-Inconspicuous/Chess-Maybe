@@ -1,3 +1,6 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #include "../../src/libs/Board.hpp"
 
 class Game{
@@ -90,6 +93,7 @@ public:
     /// @brief creates a game with the board in a position from a given fen string
     /// @param fen the starting position of the game
     Game(std::string fen);
+    Game(const Game& game);
     ~Game();
 
     /// @brief plays a move on the board
@@ -185,5 +189,10 @@ public:
     /// @return the board
     Board& getBoard();
 
+    /// @brief teturns a pointer to the board
+    /// @return the voard's memory address
+    Board*& getBoardP();
+
     void test();
 };
+#endif

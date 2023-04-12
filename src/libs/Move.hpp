@@ -7,4 +7,6 @@ struct Move{
     int promotion = 0;
 
     bool operator==(const Move cMove);
+
+    void operator=(const Move nMove);
 };
