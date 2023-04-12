@@ -4,7 +4,8 @@ struct Move;
 
 bool Move::operator==(Move cMove){
     return cMove.fileFrom == this->fileFrom && cMove.fileTo == this->fileTo
-        && cMove.rankFrom == this->rankFrom && cMove.rankTo == this->rankTo;
+        && cMove.rankFrom == this->rankFrom && cMove.rankTo == this->rankTo
+        && cMove.promotion == this->promotion;
 }
 
 void Move::operator=(const Move nMove){

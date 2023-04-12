@@ -92,6 +92,10 @@ void Game::makeMove(Move move){
     }
     //cout << mEnPassantFile << endl;
 
+    if(!mBoard->at(move.fileTo, move.rankTo).promoteTo((Piece::type)move.promotion)){
+        return;
+    }
+
     //check if the piece moved from the king's home square
     if(move.fileFrom == 4 && move.rankFrom == (mTurnToMove == Piece::white ? 0 : 7)
         && mBoard->getPiece(move.fileTo, move.rankTo).getType() == Piece::king //and is a king
@@ -338,14 +342,28 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
     vector<Move> moves;
     if(mBoard->getPiece(file, rank + forward).getColor() == Piece::nocolor){
         //there is no piece in front of the pawn, so it can move forward
-        Move move;
 
-        move.fileFrom = file;
-        move.rankFrom = rank;
-        move.fileTo = file;
-        move.rankTo = rank + forward;
+        //promotion
+        if(rank + forward == (forward == 1 ? 7 : 0)){
+            for(int promo = Piece::knight; promo < Piece::king; promo++){
+                Move move;
+                move.fileFrom = file;
+                move.rankFrom = rank;
+                move.fileTo = file;
+                move.rankTo = rank + forward;
+                move.promotion = promo;
+                moves.push_back(move);
+            }
+        } else{
+            Move move;
 
-        moves.push_back(move);
+            move.fileFrom = file;
+            move.rankFrom = rank;
+            move.fileTo = file;
+            move.rankTo = rank + forward;
+                
+            moves.push_back(move);
+        }
         
         if(rank == (forward == 1 ? 1 : 6)){
             if(mBoard->getPiece(file, rank + forward*2).getColor() == Piece::nocolor){
@@ -369,13 +387,26 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
         if((mBoard->getPiece(file + 1, rank + forward).getColor() ==
         (mTurnToMove == Piece::white ? Piece::black : Piece::white)) ||
         (file + 1 == mEnPassantFile && rank == (mTurnToMove == Piece::white ? 4 : 3))){
-            Move move;
-            move.fileFrom = file;
-            move.rankFrom = rank;
-            move.fileTo = file + 1;
-            move.rankTo = rank + forward;
+            if(rank + forward == (forward == 1 ? 7 : 0)){
+                for(int promo = Piece::knight; promo < Piece::king; promo++){
+                    Move move;
+                    move.fileFrom = file;
+                    move.rankFrom = rank;
+                    move.fileTo = file + 1;
+                    move.rankTo = rank + forward;
+                    move.promotion = promo;
+                    moves.push_back(move);
+                }
+            } else{
+                Move move;
 
-            moves.push_back(move);
+                move.fileFrom = file;
+                move.rankFrom = rank;
+                move.fileTo = file + 1;
+                move.rankTo = rank + forward;
+                    
+                moves.push_back(move);
+            }
         }
     }
 
@@ -383,13 +414,26 @@ std::vector<Move> Game::generatePawnMoves(int file, int rank, int forward){
         if((mBoard->getPiece(file - 1, rank + forward).getColor() ==
         (mTurnToMove == Piece::white ? Piece::black : Piece::white)) ||
         (file - 1 == mEnPassantFile && rank == (mTurnToMove == Piece::white ? 4 : 3))){
-            Move move;
-            move.fileFrom = file;
-            move.rankFrom = rank;
-            move.fileTo = file - 1;
-            move.rankTo = rank + forward;
+            if(rank + forward == (forward == 1 ? 7 : 0)){
+                for(int promo = Piece::knight; promo < Piece::king; promo++){
+                    Move move;
+                    move.fileFrom = file;
+                    move.rankFrom = rank;
+                    move.fileTo = file - 1;
+                    move.rankTo = rank + forward;
+                    move.promotion = promo;
+                    moves.push_back(move);
+                }
+            } else{
+                Move move;
 
-            moves.push_back(move);
+                move.fileFrom = file;
+                move.rankFrom = rank;
+                move.fileTo = file - 1;
+                move.rankTo = rank + forward;
+                    
+                moves.push_back(move);
+            }
         }
     }
     return moves;

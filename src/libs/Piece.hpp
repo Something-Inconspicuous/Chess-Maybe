@@ -33,6 +33,11 @@ class Piece{
         /// @return the color of the piece
         color getColor();
 
+        /// @brief changes a piece's type
+        /// @param promotion the type to change the piece to
+        /// @return 0 if the piece can be promoted to the given type
+        int promoteTo(type promotion);
+
         /// @brief returns the string form of the piece in the format "color type"
         /// e.g. white bishop
         /// @return the string form of a piece

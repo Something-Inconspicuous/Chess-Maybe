@@ -42,6 +42,13 @@ Piece::color Piece::getColor(){
     return mColor;
 }
 
+int Piece::promoteTo(type promotion){
+    if(promotion == notype || promotion == pawn || promotion == king)
+        return 1;
+    mType = promotion;
+    return 0;
+}
+
 string Piece::toString(){
     if(this == NULL){
         return "no piece";

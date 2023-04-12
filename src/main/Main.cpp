@@ -61,7 +61,41 @@ Move getMove(Game& game){
 
     if(move.fileTo == -1 || move.rankTo == -1){
         cout << "invalid square" << "\n";
+        std::this_thread::sleep_for(1000ms);
         goto getMove;
+    }
+
+    if(move.rankTo == (game.getTurnToMove() == Piece::white ? 7 : 0)
+        && game.getBoard().getPiece(move.fileFrom, move.rankFrom).getType() == Piece::pawn
+    ){
+        pawnpromo:
+        cout << "Promote to: ";
+        cin >> inp;
+        if(inp == "STOP"){
+            exit(EXIT_SUCCESS);
+        }
+        switch(LettersManip::toLowerCase(inp[0])){
+            case 'k': //knight
+            case 'n':
+                move.promotion = Piece::knight;
+                break;
+            
+            case 'b': //bishop
+                move.promotion = Piece::bishop;
+                break;
+            
+            case 'r': //rook
+                move.promotion = Piece::rook;
+                break;
+
+            case 'q': //queen
+                move.promotion = Piece::queen;
+                break;
+
+            default:
+                cout << "unable to promote to " << inp << ", promoting to queen.";
+                move.promotion = Piece::queen;
+        }
     }
 
     return move;
@@ -89,6 +123,7 @@ bool playerTurn(Game& game, const Piece::color playerColor){
     moveIsValid = std::find(allLegalMoves.begin(), allLegalMoves.end(), move) != allLegalMoves.end();
     if(!moveIsValid){
         cout << "illigal move" << "\n";
+        std::this_thread::sleep_for(1000ms);
         goto getAMove;
     }
 
