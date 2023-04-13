@@ -1,3 +1,6 @@
+#ifndef MOVE_HPP
+#define MOVE_HPP
+
 struct Move{
     int fileFrom;
     int rankFrom;
@@ -10,3 +13,4 @@ struct Move{
 
     void operator=(const Move nMove);
 };
+#endif

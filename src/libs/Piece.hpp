@@ -1,6 +1,8 @@
-#include "string"
-#include <map>
+#ifndef PIECE_HPP
+#define PIECE_HPP
 
+#include "string"
+#include "map"
 
 class Piece{
     public:
@@ -64,3 +66,4 @@ class Piece{
         /// @brief the color of the piece
         color mColor;
 };
+#endif

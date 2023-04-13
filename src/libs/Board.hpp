@@ -1,3 +1,6 @@
+#ifndef BOARD_HPP
+#define BOARD_HPP
+
 #include "Piece.hpp"
 #include "Move.hpp"
 #include "vector"
@@ -85,3 +88,4 @@ class Board{
         //    right, left, up, down, up_right, up_left, down_right, down_left 
         //};
 };
+#endif
