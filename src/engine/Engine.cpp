@@ -225,9 +225,6 @@ int Engine::evali(Game& game){
     Board& brd = game.getBoard();
     int eval = 0;
     int endgameWeight = 7800; //starting material
-    int matScore = 0;
-    int onScore = 0; //exists to encourage having more pieces over stronger pieces
-    int posScore = 0;
 
     forRank{
         forFile{ 
@@ -243,11 +240,11 @@ int Engine::evali(Game& game){
 
             //record material
             if(isWhite){
-                matScore += matValOfPiece;
-                onScore += outNumWeight;
+                eval += matValOfPiece;
+                eval += outNumWeight;
             } else{
-                matScore -= matValOfPiece;
-                onScore -= outNumWeight;
+                eval -= matValOfPiece;
+                eval -= outNumWeight;
             }
 
             endgameWeight -= matValOfPiece;
@@ -259,41 +256,41 @@ int Engine::evali(Game& game){
                 case Piece::pawn:
                     //TODO: check for doubled and linked pawns, adjust score accordingly
                     if(isWhite){
-                        posScore += wPawnPosVal[file][rank];
+                        eval += wPawnPosVal[file][rank];
                     } else{
-                        posScore -= bPawnPosVal[file][rank];
+                        eval -= bPawnPosVal[file][rank];
                     }
                     break;
 
                 case Piece::knight:
                     if(isWhite){
-                        posScore += wKnightPosVal[file][rank];
+                        eval += wKnightPosVal[file][rank];
                     } else{
-                        posScore -= bKnightPosVal[file][rank];
+                        eval -= bKnightPosVal[file][rank];
                     }
                     break;
 
                 case Piece::bishop:
                     if(isWhite){
-                        posScore += wBishopPosVal[file][rank];
+                        eval += wBishopPosVal[file][rank];
                     } else{
-                        posScore -= bBishopPosVal[file][rank];
+                        eval -= bBishopPosVal[file][rank];
                     }
                     break;
 
                 case Piece::rook:
                     if(isWhite){
-                        posScore += wRookPosVal[file][rank];
+                        eval += wRookPosVal[file][rank];
                     } else{
-                        posScore -= bRookPosVal[file][rank];
+                        eval -= bRookPosVal[file][rank];
                     }
                     break;
                     
                 case Piece::queen:
                     if(isWhite){
-                        posScore += wQueenPosVal[file][rank];
+                        eval += wQueenPosVal[file][rank];
                     } else{
-                        posScore -= wQueenPosVal[file][rank];
+                        eval -= wQueenPosVal[file][rank];
                     }
                     break;
                 
@@ -303,8 +300,6 @@ int Engine::evali(Game& game){
         }
     }
 
-    //material
-    eval += matScore + onScore;
 
     //king position
     constexpr long double matFrac = 1.0L/7800.0L; // 1/7800, or 1/the starting material
@@ -312,17 +307,14 @@ int Engine::evali(Game& game){
 
     const float beggamePercent = 1 - endgamePercent; //the opposate of the endgame-ness
 
-    posScore += (int)(wKingBegPosVal[brd.wKingFile][brd.bKingRank] * beggamePercent + wKingEndPosVal[brd.wKingFile][brd.wKingRank] * endgamePercent);
-    posScore -= (int)(bKingBegPosVal[brd.bKingFile][brd.bKingRank] * beggamePercent + bKingEndPosVal[brd.bKingFile][brd.bKingRank] * endgamePercent);
-
-    //position
-    eval += posScore;
+    eval += (int)(wKingBegPosVal[brd.wKingFile][brd.bKingRank] * beggamePercent + wKingEndPosVal[brd.wKingFile][brd.wKingRank] * endgamePercent);
+    eval -= (int)(bKingBegPosVal[brd.bKingFile][brd.bKingRank] * beggamePercent + bKingEndPosVal[brd.bKingFile][brd.bKingRank] * endgamePercent);
 
     //mobility
-    eval += game.getAllLegalMoves().size() * mobilityWeight; //white's mobility
-    game.changeTurn();
-    eval -= game.getAllLegalMoves().size() * mobilityWeight; //black's mobility
-    game.changeTurn();
+    //eval += game.getAllLegalMoves().size() * mobilityWeight; //white's mobility
+    //game.changeTurn();
+    //eval -= game.getAllLegalMoves().size() * mobilityWeight; //black's mobility
+    //game.changeTurn();
 
     return eval;
 }
